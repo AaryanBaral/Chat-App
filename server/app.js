@@ -1,11 +1,11 @@
 import dotenv from "dotenv";
 import express from "express";
-import { connectDB } from "./Connection/connectDB.js";
+import { connectDB } from "./connection/connectDB.js";
 import { errorMiddleWare } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute.js";
 import chatRoute from "./routes/chatRoute.js";
-import { createUser } from "./middlewares/seeds.js";
+// import { createUser } from "./middlewares/seeds.js"; only used to create fake data in the database
 
 dotenv.config({
   path: "./.env",
