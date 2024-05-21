@@ -1,24 +1,34 @@
 import {User} from "../models/userModel.js"
-const newUser = async(req,res)=>{
-    try{
+import bcrypt from "bcrypt"
+import { sendToken } from "../utils/cookie.js"
+import { ErrorHandler, TryCatch } from "../middlewares/error.js"
+const newUser = TryCatch(
+    async(req,res)=>{
         const {name,username,password} = req.body
         const avatar = {
             public_id:"dafdadsf",
             url:"rafdsae"
         }
-        await User.create({
+        const user = await User.create({
             name,
             username,
             password,
             avatar
         })
-        res.status(201).json({message:"User created sucessfully"})
-    }catch(err){
-        res.status(401).json({message:`Error while creating user:  ${err}`})
+        sendToken(res,user,201,"User Created")
     }
-}
+)
 
-const login = (req,res)=>{
-    res.send("user Login")
-}
+const login = TryCatch(
+    async (req,res,next)=>{
+        const {username,password} = req.body;
+        const user = await User.findOne({username}).select("+password")
+        if(!user) return next(new ErrorHandler("Invalid Credentials",400))
+        const isMatching = await bcrypt.compare(password,user.password)
+
+        if( ! isMatching) return next(new ErrorHandler("Invalid Credentials",400))
+
+        sendToken(res,user,201,`Wow welcome back, ${user.username}`)
+    }
+)
 export {login,newUser}

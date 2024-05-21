@@ -4,7 +4,7 @@ import { singleAvatar} from "../middlewares/multer.js";
 
 const route = express.Router()
 
-route.get("/",login)
+route.post("/login",login)
 route.post("/new",singleAvatar,newUser)
 
 export default route
