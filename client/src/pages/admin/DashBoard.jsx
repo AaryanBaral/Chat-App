@@ -89,7 +89,6 @@ const DashBoard = () => {
                 sm: "50%",
               },
               position: "relative",
-              width: "100%",
               maxWidth: "25rem",
             }}
           >

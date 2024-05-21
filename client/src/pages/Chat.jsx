@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { Fragment } from 'react'
 import AppLayout from '../components/layout/AppLayout';
 import { IconButton, Stack } from '@mui/material';
