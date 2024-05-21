@@ -1,4 +1,3 @@
-import React from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import { Box, Container, Paper, Stack, Typography } from "@mui/material";
 import {
@@ -88,7 +87,6 @@ const DashBoard = () => {
                 sm: "50%",
               },
               position: "relative",
-              width: "100%",
               maxWidth: "25rem",
               height: "25rem",
             }}
