@@ -1,4 +1,3 @@
-import React from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import { Box, Container, Paper, Stack, Typography } from "@mui/material";
 import {
@@ -14,6 +13,8 @@ import {
   SearchField,
 } from "../../components/Styles/StyleComponent";
 import { matBlack } from "../../components/constants/color";
+import { DoughnutChart, LineChart } from "../../components/specific/Charts";
+
 
 const DashBoard = () => {
   const AppBar = (
@@ -73,7 +74,7 @@ const DashBoard = () => {
             <Typography margin={"2rem 0"} variant="h4">
               {""}
             </Typography>
-            <Typography></Typography>
+            <LineChart value={[23,56,33,67]}/>
           </Paper>
           <Paper
             elevation={3}
@@ -90,10 +91,11 @@ const DashBoard = () => {
               position: "relative",
               width: "100%",
               maxWidth: "25rem",
-              height: "25rem",
             }}
           >
-            {"Donught Chart"}
+            <DoughnutChart labels={["Single Chats", "Group Chats"]}
+            value={[23, 66]}/>
+
             <Stack
               position={"absolute"}
               direction={"row"}
