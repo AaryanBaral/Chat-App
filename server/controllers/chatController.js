@@ -16,7 +16,7 @@ const newGroupChat = TryCatch(async (req, res, next) => {
   await Chat.create({
     name,
     groupChat: true,
-    creator: req.user,
+    creator: req.userId,
     members: allMembers,
   });
   emmitEvent(req, ALERT, allMembers, `Welcome to ${name} group`);
@@ -39,14 +39,14 @@ const getMychats = TryCatch(async (req, res, next) => {
       avatar: groupChat
         ? members.slice(0, 3).map(({ avatar }) => avatar.url)
         : otherMember.avatar.url,
-      name:groupChat?name:otherMember.name,
+      name: groupChat ? name : otherMember.name,
       groupChat,
-      members:members.reduce((prev,curr)=>{
-        if(curr._id.toString()!== req.userId.toString()){
-            prev.push(req.userId)
+      members: members.reduce((prev, curr) => {
+        if (curr._id.toString() !== req.userId.toString()) {
+          prev.push(req.userId);
         }
-        return prev
-      },[])
+        return prev;
+      }, []),
     };
   });
   return res.status(200).json({
@@ -55,4 +55,25 @@ const getMychats = TryCatch(async (req, res, next) => {
   });
 });
 
-export { newGroupChat, getMychats };
+const getMyGroups = TryCatch(async (req, res, next) => {
+  const chats = await Chat.find({
+    creator: req.userId,
+    groupChat: true,
+    members: req.userId,
+  }).populate("members", "name avatar");
+  console.log(chats);
+  const groups = chats.map(({ _id, members, name, groupChat }) => {
+    return {
+      _id,
+      groupChat,
+      name,
+      avatar: members.slice(0, 3).map(({ avatar }) => avatar.url),
+    };
+  });
+  return res.status(200).json({
+    sucess: true,
+    message: groups,
+  });
+});
+
+export { newGroupChat, getMychats, getMyGroups };
