@@ -5,7 +5,7 @@ import { errorMiddleWare } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute.js";
 import chatRoute from "./routes/chatRoute.js";
-// import { createUser } from "./middlewares/seeds.js"; only used to create fake data in the database
+// import { createUser } from "./seeders/seeds.js"; only used to create fake data in the database
 
 dotenv.config({
   path: "./.env",
