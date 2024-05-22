@@ -16,6 +16,6 @@ route.post("/new", singleAvatar, newUser);
 route.use(isAuthenticated); // authentication is made compulsory to access any of the folowing routes
 route.get("/me", getProfile);
 route.post("/logout", logout);
-route.post("/search", searchUser);
+route.get("/search", searchUser);
 
 export default route;

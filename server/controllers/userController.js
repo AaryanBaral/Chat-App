@@ -51,10 +51,9 @@ const searchUser = TryCatch(async (req, res, next) => {
     
   res
     .status(200)
-    .cookie("wollo-token", "", { ...cookieOption, maxAge: 0 })
     .json({
       sucess: true,
-      message: "Logged out sucessfully",
+      message: name,
     });
 });
 export { login, newUser, getProfile, logout, searchUser };
