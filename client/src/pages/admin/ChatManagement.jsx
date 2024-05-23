@@ -87,7 +87,6 @@ const ChatManagement = () => {
 
   return (
     <AdminLayout>
-      <Table heading={"All Chats"} columns={columns} rows={rows}/>
     </AdminLayout>
   );
 };

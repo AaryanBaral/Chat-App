@@ -2,8 +2,9 @@ import express from "express";
 import { isAuthenticated } from "../middlewares/auth.js";
 import {
   addMembers,
-  deleteChatDetails,
+  deleteChat,
   getChatDetails,
+  getMessages,
   getMychats,
   getMyGroups,
   leaveGroup,
@@ -24,11 +25,12 @@ route.put("/removemember", removeMember);
 route.delete("/leave/:id",leaveGroup)
 
 // Send Attachments
-
 route.post("/message",acttachmentsMulter,sendAttachments)
-// Send Messages
 
-route.route("/:id").get(getChatDetails).put(renameGroup).delete(deleteChatDetails)
+// Send Messages
+route.get("/message/:id",getMessages)
+
 // Get chat details,rename,delete
+route.route("/:id").get(getChatDetails).put(renameGroup).delete(deleteChat)
 
 export default route;

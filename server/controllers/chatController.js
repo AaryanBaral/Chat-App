@@ -1,10 +1,15 @@
-import { ALERT, NEW_ATTACHMENTS, NEW_MESSAGE_ALERT, REFETCH_CHATS } from "../constants/events.js";
+import {
+  ALERT,
+  NEW_ATTACHMENTS,
+  NEW_MESSAGE_ALERT,
+  REFETCH_CHATS,
+} from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 import { ErrorHandler, TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chatModel.js";
 import { User } from "../models/userModel.js";
 import { Message } from "../models/messageModel.js";
-import { emmitEvent } from "../utils/feature.js";
+import { deleteFilesFromCloudinary, emmitEvent } from "../utils/feature.js";
 
 const newGroupChat = TryCatch(async (req, res, next) => {
   const { name, members } = req.body;
@@ -215,58 +220,110 @@ const sendAttachments = TryCatch(async (req, res, next) => {
   const messageForRealTime = {
     ...messageForDB,
     sender: { _id: req.userId, name: me.name },
- 
   };
-  const message = await Message.create(messageForDB)
-  if(!message) return next(new ErrorHandler("Error while creating a new Message",500))
-  emmitEvent(req,NEW_ATTACHMENTS,chat.members,{message:messageForRealTime,chatId})
-  emmitEvent(req,NEW_MESSAGE_ALERT,chat.members,{chatId})
+  const message = await Message.create(messageForDB);
+  if (!message)
+    return next(new ErrorHandler("Error while creating a new Message", 500));
+  emmitEvent(req, NEW_ATTACHMENTS, chat.members, {
+    message: messageForRealTime,
+    chatId,
+  });
+  emmitEvent(req, NEW_MESSAGE_ALERT, chat.members, { chatId });
   return res.status(200).json({
     sucess: true,
     message,
   });
 });
-const getChatDetails = TryCatch(async(req,res,next)=>{
-  if(req.query.populate === "true"){
-    // lean property helps to remove chat object from mongodb databse and add it to the js object 
+const getChatDetails = TryCatch(async (req, res, next) => {
+  if (req.query.populate === "true") {
+    // lean property helps to remove chat object from mongodb databse and add it to the js object
     // so any changes to the chat wont affect the mongodb database object
-    const chat = await Chat.findById(req.params.id).populate("members","name avatar").lean()
+    const chat = await Chat.findById(req.params.id)
+      .populate("members", "name avatar")
+      .lean();
     if (!chat) return next(new ErrorHandler("Chat not Found", 404));
-    chat.members=chat.members.map(({_id,name,avatar})=> ({
+    chat.members = chat.members.map(({ _id, name, avatar }) => ({
       _id,
       name,
-      avatar:avatar.url
-    }))
+      avatar: avatar.url,
+    }));
     res.status(200).json({
-      sucess:true,
-      chat
-    })
-  }else{
-    const chat = await Chat.findById(req.params.id)
+      sucess: true,
+      chat,
+    });
+  } else {
+    const chat = await Chat.findById(req.params.id);
     if (!chat) return next(new ErrorHandler("Chat not Found", 404));
     res.status(200).json({
-      sucess:true,
-      chat
-    })
+      sucess: true,
+      chat,
+    });
   }
-
-})
-const deleteChatDetails = TryCatch(async(req,res,next)=>{
-
-})
-const renameGroup = TryCatch(async(req,res,next)=>{
-  const chatId = req.params.id
-  const {name} = req.body
-  const chat = await Chat.findById(chatId)
+});
+const deleteChat = TryCatch(async (req, res, next) => {
+  const chatId = req.params.id;
+  const chat = await Chat.findById(chatId);
   if (!chat) return next(new ErrorHandler("Chat not Found", 404));
-  if(chat.creator.toString()!==req.userId.toString()) return next(new ErrorHandler("Only admin can rename the group", 400));
-  chat.name = name
-  await chat.save()
-  emmitEvent(req,REFETCH_CHATS,chat.members)
+  const members = chat.members;
+  if (chat.groupChat && chat.creator.toString() !== req.userId.toString())
+    return next(new ErrorHandler("Only admin can rename the group", 400));
+  if (!chat.groupChat && !chat.members.include(req.userId).toString)
+    return next(
+      new ErrorHandler("You are not allowed to delete this chat", 400)
+    );
+  // before deleting chats we first have to delete all messages and attachments belonging to the chat
+  const chatsWithAttachments = await Message.find({
+    chat: chatId,
+    attachments: { $exists: true, $ne: [] },
+  });
+  const publicIds = [];
+  chatsWithAttachments.forEach(({ attachment }) => {
+    attachment.forEach(({ public_id }) => publicIds.push(public_id));
+  });
+  await Promise.all([
+    deleteFilesFromCloudinary(publicIds),Chat.deleteOne(),Message.deleteMany({chat:chatId})
+  ])
+  emmitEvent(req,REFETCH_CHATS,members)
   res.status(200).json({
     sucess:true,
-    message:"Group renamed sucessfully"
+    message:"Chat deleted sucessfully"
   })
+});
+const renameGroup = TryCatch(async (req, res, next) => {
+  const chatId = req.params.id;
+  const { name } = req.body;
+  const chat = await Chat.findById(chatId);
+  if (!chat) return next(new ErrorHandler("Chat not Found", 404));
+  if (chat.creator.toString() !== req.userId.toString())
+    return next(new ErrorHandler("Only admin can rename the group", 400));
+  chat.name = name;
+  await chat.save();
+  emmitEvent(req, REFETCH_CHATS, chat.members);
+  res.status(200).json({
+    sucess: true,
+    message: "Group renamed sucessfully",
+  });
+});
+const getMessages = TryCatch(async(req,res,next)=>{
+  const chatId = req.params.id
+  const {page = 1} = req.body
+  const limit =10
+  const skip = (page-1)*limit
+
+  const [messages,totalMessageCount] =await Promise.all([Message.find({chat:chatId})
+  .sort({createdAt:-1})
+  .limit(limit)
+  .skip(skip)
+  .populate("sender","name avatar")
+  .lean(),Message.countDocuments({chat:chatId})])
+  const totalPages = Math.ceil(totalMessageCount/limit)
+
+  res.status(200).json({
+    sucess:true,
+    messages:messages.reverse(),
+    totalPages
+  })
+
 })
 export {
   newGroupChat,
@@ -277,6 +334,7 @@ export {
   leaveGroup,
   sendAttachments,
   getChatDetails,
-  deleteChatDetails,
-  renameGroup
+  deleteChat,
+  renameGroup,
+  getMessages
 };
