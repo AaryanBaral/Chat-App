@@ -1,4 +1,4 @@
-import { Line, Doughnut } from 'react-chartjs-2'
+import { Line, Doughnut } from "react-chartjs-2";
 import {Chart as ChartJS, 
   CategoryScale,
   Tooltip,
@@ -10,7 +10,8 @@ import {Chart as ChartJS,
   Legend,
 } from 'chart.js';
 import { orange, purple } from '@mui/material/colors';
-import { purpleLight } from '../constants/color';
+import { orangeLight, purpleLight } from '../constants/color';
+import { getLast7Days } from "../../lib/features";
 
 
 ChartJS.register(  
@@ -53,10 +54,10 @@ const lineChartOptions = {
 
 const LineChart = ({value=[]}) => {
   const data = {
-    labels,
+    labels ,
     datasets: [
       {
-      data: [1,5,35,40,24,12,6],
+      data: value,
       label: "Revenue",
       fill: true,
       backgroundColor: purpleLight,
@@ -91,8 +92,8 @@ const DoughnutChart = ({value = [], labels = [] }) => {
     datasets: [
       {
       data: value,
-      fill: true,
-      backgroundColor: [purpleLight, orange],
+      backgroundColor: [purpleLight, orangeLight],
+      hoverBackgroundColor: [purple, orange],
       borderColor: [purple, orange],
       offset: 20,
       },

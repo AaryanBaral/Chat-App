@@ -1,5 +1,4 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
-import React from 'react'
 
 const ConfirmDeleteDialougBox = ({open,handleClose,deleteHandler}) => {
   return (
