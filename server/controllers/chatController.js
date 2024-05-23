@@ -2,6 +2,7 @@ import { ALERT, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 import { ErrorHandler, TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chatModel.js";
+import { User } from "../models/userModel.js";
 import { emmitEvent } from "../utils/feature.js";
 
 const newGroupChat = TryCatch(async (req, res, next) => {
@@ -76,4 +77,32 @@ const getMyGroups = TryCatch(async (req, res, next) => {
   });
 });
 
-export { newGroupChat, getMychats, getMyGroups };
+const addMembers = TryCatch(async(req,res,next)=>{
+  const {chatId,members} = req.body
+  if(!members || members.length<1) return next(new ErrorHandler("Please provide members",400))
+  const chats = await Chat.findById(chatId)
+  if(!chats) return next( new ErrorHandler("Chat not Found",404))
+  if(!chats.groupChat) return  next(new ErrorHandler("Chat is not a group chat",400))
+  if(chats.creator.toString() !== req.userId.toString()) return  next( ErrorHandler("Only admin can add members",403))
+  const allMembersPromise = members.map((memberId)=>User.findById(memberId,"name"));
+  const allMembers = await Promise.all(allMembersPromise) 
+  const uniqueMembers = allMembers
+  .filter((member)=> !chats.members.includes(member._id.toString()))
+  .map((member)=> member._id)
+  chats.members.push(...uniqueMembers.map((member)=> member._id))
+  if(chats.members.length>100) return next( new ErrorHandler("Group members limit reached",400))
+  await chats.save()
+  const allMemberNames = uniqueMembers.map((member)=> member.name).join(",")
+  emmitEvent(
+    req,
+    ALERT,
+    chats.members,
+    `${allMemberNames} have been added in the group`
+  )
+  emmitEvent(req,REFETCH_CHATS,chats.members)
+  return res.status(200).json({
+    sucess:true,
+    mesage:"members added sucesssfully "
+  })
+})
+export { newGroupChat, getMychats, getMyGroups,addMembers };
