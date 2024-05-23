@@ -2,7 +2,7 @@ import express from "express";
 import { isAuthenticated } from "../middlewares/auth.js";
 import {
   addMembers,
-  deleteChatDetails,
+  deleteChat,
   getChatDetails,
   getMychats,
   getMyGroups,
@@ -28,7 +28,7 @@ route.delete("/leave/:id",leaveGroup)
 route.post("/message",acttachmentsMulter,sendAttachments)
 // Send Messages
 
-route.route("/:id").get(getChatDetails).put(renameGroup).delete(deleteChatDetails)
+route.route("/:id").get(getChatDetails).put(renameGroup).delete(deleteChat)
 // Get chat details,rename,delete
 
 export default route;
