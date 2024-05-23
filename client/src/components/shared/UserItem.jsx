@@ -1,25 +1,25 @@
 import { Avatar, IconButton, ListItem, Stack, Typography } from "@mui/material";
 import { Add as AddIcon, Remove as RemoveIcon } from "@mui/icons-material";
-import React, { memo } from "react";
+import { memo } from "react";
 
 const UserItem = ({
   user,
   handler,
   handlerIsLoading,
   isAdded,
-  styling = ({} = false),
+  styling = {},
 }) => {
   const { name, _id, avatar } = user;
   return (
     <ListItem>
       <Stack
-        direction={"row"}
-        alignItems={"center"}
-        spacing={"1rem"}
-        width={"100%"}
+        direction="row"
+        alignItems="center"
+        spacing="1rem"
+        width="100%"
         {...styling}
       >
-        <Avatar />
+        <Avatar src={avatar} />
         <Typography
           variant="body1"
           sx={{
@@ -28,7 +28,7 @@ const UserItem = ({
             WebkitLineClamp: 1,
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
-            textOverflow: "ellipse",
+            textOverflow: "ellipsis",
             width: "100%",
           }}
         >
@@ -39,7 +39,7 @@ const UserItem = ({
           sx={{
             bgcolor: isAdded ? "error.main" : "primary.main",
             color: "white",
-            "&: hover": {
+            "&:hover": {
               bgcolor: isAdded ? "error.dark" : "primary.dark",
             },
           }}

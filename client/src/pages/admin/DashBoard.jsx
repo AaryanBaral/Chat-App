@@ -60,7 +60,15 @@ const DashBoard = () => {
     <AdminLayout>
       <Container component={"main"}>
         {AppBar}
-        <Stack direction={"row"} spacing={"2rem"} flexWrap={"wrap"}>
+        <Stack direction={{
+          xs: "column",
+          lg: "row",
+        }} 
+        alignItems={{
+          xs: "center",
+          lg: "stretch",
+        
+        }} flexWrap={"wrap"} justifyContent={"center"} sx={{gap: "2rem"}}>
           <Paper
             elevation={3}
             sx={{
@@ -74,7 +82,7 @@ const DashBoard = () => {
             <Typography margin={"2rem 0"} variant="h4">
               {""}
             </Typography>
-            <LineChart value={[23,56,33,67]}/>
+            <LineChart value={[23,56,33,67,33,2]}/>
           </Paper>
           <Paper
             elevation={3}
@@ -117,6 +125,7 @@ const DashBoard = () => {
 };
 const Widget = ({ title, value, Icon }) => (  
 <Paper
+  elevation={3}
   sx={{
       padding: "2rem",
       margin: "2rem 0",
@@ -137,7 +146,7 @@ const Widget = ({ title, value, Icon }) => (
         alignItems: "center",
       }}
       >{value}</Typography>
-      <Stack>
+      <Stack direction={"row"} spacing={"1rem"} alignItems={"center"} >
         {Icon}
         <Typography>{title} ok</Typography>
       </Stack>

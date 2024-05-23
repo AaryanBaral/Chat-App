@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import React, { memo } from 'react'
+import { memo } from 'react'
 import { lightBlue } from '../constants/color';
 import moment from 'moment';
 import { fileFormat } from '../../lib/features';
