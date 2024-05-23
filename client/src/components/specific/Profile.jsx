@@ -1,5 +1,4 @@
 import { Avatar, Stack, Typography } from "@mui/material";
-import React from "react";
 import { 
     Face as FaceIcon,
     AlternateEmail as UserNameIcon,

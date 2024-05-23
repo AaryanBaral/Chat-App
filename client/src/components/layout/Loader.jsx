@@ -1,5 +1,4 @@
 import { Grid,Skeleton, Stack } from '@mui/material'
-import React from 'react'
 
 export const LayoutLoader = () => {
   return (

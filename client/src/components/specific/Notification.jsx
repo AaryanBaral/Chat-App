@@ -7,11 +7,11 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { memo } from "react";
+import { memo } from "react";
 import { sampleNotification } from "../constants/SampleData";
 
 const Notification = () => {
-  const friendRequestHandler = ({ _id, acept }) => {};
+  const friendRequestHandler = ({ _id, accept }) => {};
 
   return (
     <Dialog open>
