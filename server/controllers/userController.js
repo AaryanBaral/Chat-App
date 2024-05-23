@@ -2,8 +2,9 @@ import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import { cookieOption, sendToken } from "../utils/cookie.js";
 import { ErrorHandler, TryCatch } from "../middlewares/error.js";
-const newUser = TryCatch(async (req, res) => {
+const newUser = TryCatch(async (req, res,next) => {
   const { name, username, password } = req.body;
+  if(!name || !username|| !password) return next(new ErrorHandler("please provide all the required fields",400))
   const avatar = {
     public_id: "dafdadsf",
     url: "rafdsae",

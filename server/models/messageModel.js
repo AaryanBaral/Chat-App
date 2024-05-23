@@ -11,7 +11,8 @@ const messageSchema = new Schema({
         ref:"User",
         required:true
     },
-    attachment:{
+    attachment:[
+        {
             public_id:{
                 type:String,
                 required :true
@@ -20,8 +21,9 @@ const messageSchema = new Schema({
                 type :String,
                 required:true
             }
+        } 
             
-        }
+    ]
 },{
     timestamps:true
 })
