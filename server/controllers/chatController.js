@@ -304,6 +304,27 @@ const renameGroup = TryCatch(async (req, res, next) => {
     message: "Group renamed sucessfully",
   });
 });
+const getMessages = TryCatch(async(req,res,next)=>{
+  const chatId = req.params.id
+  const {page = 1} = req.body
+  const limit =10
+  const skip = (page-1)*limit
+
+  const [messages,totalMessageCount] =await Promise.all([Message.find({chat:chatId})
+  .sort({createdAt:-1})
+  .limit(limit)
+  .skip(skip)
+  .populate("sender","name avatar")
+  .lean(),Message.countDocuments({chat:chatId})])
+  const totalPages = Math.ceil(totalMessageCount/limit)
+
+  res.status(200).json({
+    sucess:true,
+    messages:messages.reverse(),
+    totalPages
+  })
+
+})
 export {
   newGroupChat,
   getMychats,
@@ -315,4 +336,5 @@ export {
   getChatDetails,
   deleteChat,
   renameGroup,
+  getMessages
 };

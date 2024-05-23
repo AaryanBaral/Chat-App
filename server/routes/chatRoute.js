@@ -4,6 +4,7 @@ import {
   addMembers,
   deleteChat,
   getChatDetails,
+  getMessages,
   getMychats,
   getMyGroups,
   leaveGroup,
@@ -24,11 +25,12 @@ route.put("/removemember", removeMember);
 route.delete("/leave/:id",leaveGroup)
 
 // Send Attachments
-
 route.post("/message",acttachmentsMulter,sendAttachments)
-// Send Messages
 
-route.route("/:id").get(getChatDetails).put(renameGroup).delete(deleteChat)
+// Send Messages
+route.get("/message/:id",getMessages)
+
 // Get chat details,rename,delete
+route.route("/:id").get(getChatDetails).put(renameGroup).delete(deleteChat)
 
 export default route;

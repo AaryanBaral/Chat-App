@@ -5,7 +5,7 @@ const ChatManagement = () => {
   return (
     <AdminLayout>
         <>
-    Chat Management 
+    Chat Management to you
       </>
     </AdminLayout>
   )
