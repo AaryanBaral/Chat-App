@@ -6,6 +6,7 @@ import { Chat } from "../models/chatModel.js";
 import { Request } from "../models/requestModel.js";
 import { emmitEvent } from "../utils/feature.js";
 import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
+import { getOtherMember } from "../lib/helper.js";
 const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password } = req.body;
   if (!name || !username || !password)
@@ -107,41 +108,75 @@ const acceptFriendRequest = TryCatch(async (req, res, next) => {
       new ErrorHandler("You are not allowed to accept this request", 400)
     );
   if (!accept) {
-    await request.deleteOne()
+    await request.deleteOne();
     return res.status(200).json({
       sucess: true,
       message: "Friend Request Sent",
     });
   }
-  const members = [request.sender._id,request.receiver._id]
-  await Promise.all([Chat.create({
-    members,
-    name:`${request.sender.name}- ${request.receiver.name}`
-  }),request.deleteOne()])
+  const members = [request.sender._id, request.receiver._id];
+  await Promise.all([
+    Chat.create({
+      members,
+      name: `${request.sender.name}- ${request.receiver.name}`,
+    }),
+    request.deleteOne(),
+  ]);
   emmitEvent(req, REFETCH_CHATS, members);
   return res.status(200).json({
     sucess: true,
     message: "Friend Request Accepted",
-    senderId:request.sender._id
+    senderId: request.sender._id,
   });
 });
-const getMyNotifications = TryCatch(async(req,res,next)=>{
+const getMyNotifications = TryCatch(async (req, res, next) => {
   const requests = await Request.find({
-    receiver:req.userId
-  }).populate("sender","name avatar")
-  const allRequests = requests.map(({_id,sender})=>({
+    receiver: req.userId,
+  }).populate("sender", "name avatar");
+  const allRequests = requests.map(({ _id, sender }) => ({
     _id,
-    sender:{
-      _id:sender._id,
-      name:sender.name,
-      avatar:sender.avatar.url
-    }
-  }))
+    sender: {
+      _id: sender._id,
+      name: sender.name,
+      avatar: sender.avatar.url,
+    },
+  }));
   res.status(200).json({
-    sucess:true,
-    allRequests
-  })
-})
+    sucess: true,
+    allRequests,
+  });
+});
+
+const getMyFriends = TryCatch(async (req, res, next) => {
+  const { chatId } = req.query;
+  const chats = await Chat.find({
+    members: req.userId,
+    groupChat: false,
+  }).populate("members", "name avatar");
+  const friends = chats.map(({ members }) => {
+    const othermember = getOtherMember(members, req.userId);
+    return {
+      _id: othermember._id,
+      name: othermember.name,
+      avatar: othermember.avatar.url,
+    };
+  });
+  if(chatId){
+    // this api is used by admin of the hat to see list of friends of the admin that are not present in a given chatId
+    const chat = await Chat.findById(chatId)
+    const availableFriend = friends.filter((friend)=>!chat.members.includes(friend._id))
+    return res.status(200).json({
+      sucess:true,
+      availableFriend
+    })
+  }
+  else{
+    return res.status(200).json({
+      sucess:true,
+      friends
+    })
+  }
+});
 export {
   login,
   newUser,
@@ -150,5 +185,6 @@ export {
   searchUser,
   sendFriendRequest,
   acceptFriendRequest,
-  getMyNotifications
+  getMyNotifications,
+  getMyFriends
 };

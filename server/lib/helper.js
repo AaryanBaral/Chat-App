@@ -1,5 +1,5 @@
 const getOtherMember = (members,userId)=>{
-    return members.filter((member)=> member._id.toString()!== userId.toString())
+    return members.find((member)=> member._id.toString()!== userId.toString())
 }
 
 export {getOtherMember}
