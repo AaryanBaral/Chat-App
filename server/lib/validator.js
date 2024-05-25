@@ -1,9 +1,7 @@
 import { body, validationResult, param, check } from "express-validator";
 import { ErrorHandler } from "../middlewares/error.js";
 const validatorHandler = (req, res, next) => {
-  console.log("validatorHandler");
   const errors = validationResult(req);
-  console.log(errors);
   const errorMassage = errors
     .array()
     .map((error) => error.msg)
@@ -59,6 +57,13 @@ const renameGroupValidator = () => [
     param("id", "Please Provide chatId").notEmpty(),
     param("name", "Please Provide Name").notEmpty(),
 ];
+const sendFriendRequestValidator = () => [
+    body("userId", "Please Provide User Id").notEmpty(),
+];
+const acceptFriendRequestValidator = () => [
+    body("requestId", "Please Provide Request Id").notEmpty(),
+    body("accept").notEmpty().withMessage("Please Add Accept").isBoolean().withMessage("Accept Must Be Boolean")
+];
 
 export {
   registerValidator,
@@ -70,5 +75,7 @@ export {
   leaveGroupValidator,
   sendAttachmentsValidator,
   chatIdValidator,
-  renameGroupValidator
+  renameGroupValidator,
+  acceptFriendRequestValidator,
+  sendFriendRequestValidator,
 };
