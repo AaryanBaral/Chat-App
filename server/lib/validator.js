@@ -1,9 +1,7 @@
 import { body, validationResult, param, check } from "express-validator";
 import { ErrorHandler } from "../middlewares/error.js";
 const validatorHandler = (req, res, next) => {
-  console.log("validatorHandler");
   const errors = validationResult(req);
-  console.log(errors);
   const errorMassage = errors
     .array()
     .map((error) => error.msg)

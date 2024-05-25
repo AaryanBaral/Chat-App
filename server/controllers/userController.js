@@ -2,9 +2,13 @@ import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import { cookieOption, sendToken } from "../utils/cookie.js";
 import { ErrorHandler, TryCatch } from "../middlewares/error.js";
-const newUser = TryCatch(async (req, res,next) => {
+import { Chat } from "../models/chatModel.js";
+const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password } = req.body;
-  if(!name || !username|| !password) return next(new ErrorHandler("please provide all the required fields",400))
+  if (!name || !username || !password)
+    return next(
+      new ErrorHandler("please provide all the required fields", 400)
+    );
   const avatar = {
     public_id: "dafdadsf",
     url: "rafdsae",
@@ -48,13 +52,24 @@ const logout = TryCatch(async (req, res, next) => {
     });
 });
 const searchUser = TryCatch(async (req, res, next) => {
-    const {name} = req.query
-    
-  res
-    .status(200)
-    .json({
-      sucess: true,
-      message: name,
-    });
+  const { name="" } = req.query;
+  const chats = await Chat.find({
+    groupChat: false,
+    members: req.userId,
+  }).populate();
+  const allUsersFromMyChat = chats.flatMap((chat) => chat.members);
+  const allUserExceptMeAndMyFriends = await User.find({
+    _id: { $nin: allUsersFromMyChat },
+    name: { $regex: name, $options: "i" },
+  });
+   const users = allUserExceptMeAndMyFriends.map(({_id,name,avatar})=>({
+    _id,
+    name,
+    avatar:avatar.url
+   }))
+  res.status(200).json({
+    sucess: true,
+    users,
+  });
 });
 export { login, newUser, getProfile, logout, searchUser };
