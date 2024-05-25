@@ -60,6 +60,10 @@ const renameGroupValidator = () => [
 const sendFriendRequestValidator = () => [
     body("userId", "Please Provide User Id").notEmpty(),
 ];
+const acceptFriendRequestValidator = () => [
+    body("requestId", "Please Provide Request Id").notEmpty(),
+    body("accept").notEmpty().withMessage("Please Add Accept").isBoolean().withMessage("Accept Must Be Boolean")
+];
 
 export {
   registerValidator,
@@ -72,5 +76,6 @@ export {
   sendAttachmentsValidator,
   chatIdValidator,
   renameGroupValidator,
-  sendFriendRequestValidator
+  acceptFriendRequestValidator,
+  sendFriendRequestValidator,
 };

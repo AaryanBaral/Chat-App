@@ -5,7 +5,7 @@ import { ErrorHandler, TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chatModel.js";
 import { Request } from "../models/requestModel.js";
 import { emmitEvent } from "../utils/feature.js";
-import { NEW_REQUEST } from "../constants/events.js";
+import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password } = req.body;
   if (!name || !username || !password)
@@ -76,24 +76,78 @@ const searchUser = TryCatch(async (req, res, next) => {
   });
 });
 const sendFriendRequest = TryCatch(async (req, res, next) => {
-  const {userId} = req.body;
+  const { userId } = req.body;
   const request = await Request.findOne({
-    $or:[
-      {sender:userId,receiver:req.userId},
-      {sender:req.userId,receiver:userId},
-    ]
-  })
-  if(request) return next(new ErrorHandler("Friend Request Already Sent",400))
+    $or: [
+      { sender: userId, receiver: req.userId },
+      { sender: req.userId, receiver: userId },
+    ],
+  });
+  if (request)
+    return next(new ErrorHandler("Friend Request Already Sent", 400));
   await Request.create({
-    sender:req.userId,
-    receiver:userId,
-  })
-  emmitEvent(req,NEW_REQUEST,[userId])
-  res
-    .status(200)
-    .json({
+    sender: req.userId,
+    receiver: userId,
+  });
+  emmitEvent(req, NEW_REQUEST, [userId]);
+  res.status(200).json({
+    sucess: true,
+    message: "Friend Request Sent",
+  });
+});
+const acceptFriendRequest = TryCatch(async (req, res, next) => {
+  const { requestId, accept } = req.body;
+  const request = await Request.findById(requestId)
+    .populate("sender", "name")
+    .populate("reciver", "name");
+  if (!request) return next(new ErrorHandler("Request Not Found", 400));
+  if (request.receiver._id.toString() !== req.userId.toString())
+    return next(
+      new ErrorHandler("You are not allowed to accept this request", 400)
+    );
+  if (!accept) {
+    await request.deleteOne()
+    return res.status(200).json({
       sucess: true,
       message: "Friend Request Sent",
     });
+  }
+  const members = [request.sender._id,request.reciver._id]
+  await Promise.all([Chat.create({
+    members,
+    name:`${request.sender.name}- ${request.reciver.name}`
+  }),request.deleteOne()])
+  emmitEvent(req, REFETCH_CHATS, members);
+  return res.status(200).json({
+    sucess: true,
+    message: "Friend Request Accepted",
+    senderId:req.sender._id
+  });
 });
-export { login, newUser, getProfile, logout, searchUser, sendFriendRequest };
+const getAllNotifications = TryCatch(async(req,res,next)=>{
+  const requests = await Request.find({
+    receiver:req.userId
+  }).populate("sender","name avatar")
+  const allRequests = requests.map(({_id,sender})=>({
+    _id,
+    sender:{
+      _id:sender._id,
+      name:sender.name,
+      avatar:sender.avatar.url
+    }
+  }))
+  res.status(200).json({
+    sucess:true,
+    allRequests
+  })
+})
+export {
+  login,
+  newUser,
+  getProfile,
+  logout,
+  searchUser,
+  sendFriendRequest,
+  acceptFriendRequest,
+  getAllNotifications
+};
