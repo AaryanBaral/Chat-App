@@ -99,7 +99,8 @@ const acceptFriendRequest = TryCatch(async (req, res, next) => {
   const { requestId, accept } = req.body;
   const request = await Request.findById(requestId)
     .populate("sender", "name")
-    .populate("reciver", "name");
+    .populate("receiver", "name");
+
   if (!request) return next(new ErrorHandler("Request Not Found", 400));
   if (request.receiver._id.toString() !== req.userId.toString())
     return next(
@@ -112,19 +113,19 @@ const acceptFriendRequest = TryCatch(async (req, res, next) => {
       message: "Friend Request Sent",
     });
   }
-  const members = [request.sender._id,request.reciver._id]
+  const members = [request.sender._id,request.receiver._id]
   await Promise.all([Chat.create({
     members,
-    name:`${request.sender.name}- ${request.reciver.name}`
+    name:`${request.sender.name}- ${request.receiver.name}`
   }),request.deleteOne()])
   emmitEvent(req, REFETCH_CHATS, members);
   return res.status(200).json({
     sucess: true,
     message: "Friend Request Accepted",
-    senderId:req.sender._id
+    senderId:request.sender._id
   });
 });
-const getAllNotifications = TryCatch(async(req,res,next)=>{
+const getMyNotifications = TryCatch(async(req,res,next)=>{
   const requests = await Request.find({
     receiver:req.userId
   }).populate("sender","name avatar")
@@ -149,5 +150,5 @@ export {
   searchUser,
   sendFriendRequest,
   acceptFriendRequest,
-  getAllNotifications
+  getMyNotifications
 };

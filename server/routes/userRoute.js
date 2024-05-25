@@ -1,7 +1,7 @@
 import express from "express";
 import {
   acceptFriendRequest,
-  getAllNotifications,
+  getMyNotifications,
   getProfile,
   login,
   logout,
@@ -47,7 +47,7 @@ route.put(
 );
 route.get(
   "/getnotifications",
-  getAllNotifications
+  getMyNotifications
 );
 
 export default route;
