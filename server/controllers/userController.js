@@ -3,6 +3,9 @@ import bcrypt from "bcrypt";
 import { cookieOption, sendToken } from "../utils/cookie.js";
 import { ErrorHandler, TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chatModel.js";
+import { Request } from "../models/requestModel.js";
+import { emmitEvent } from "../utils/feature.js";
+import { NEW_REQUEST } from "../constants/events.js";
 const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password } = req.body;
   if (!name || !username || !password)
@@ -52,7 +55,7 @@ const logout = TryCatch(async (req, res, next) => {
     });
 });
 const searchUser = TryCatch(async (req, res, next) => {
-  const { name="" } = req.query;
+  const { name = "" } = req.query;
   const chats = await Chat.find({
     groupChat: false,
     members: req.userId,
@@ -62,14 +65,35 @@ const searchUser = TryCatch(async (req, res, next) => {
     _id: { $nin: allUsersFromMyChat },
     name: { $regex: name, $options: "i" },
   });
-   const users = allUserExceptMeAndMyFriends.map(({_id,name,avatar})=>({
+  const users = allUserExceptMeAndMyFriends.map(({ _id, name, avatar }) => ({
     _id,
     name,
-    avatar:avatar.url
-   }))
+    avatar: avatar.url,
+  }));
   res.status(200).json({
     sucess: true,
     users,
   });
 });
-export { login, newUser, getProfile, logout, searchUser };
+const sendFriendRequest = TryCatch(async (req, res, next) => {
+  const {userId} = req.body;
+  const request = await Request.findOne({
+    $or:[
+      {sender:userId,receiver:req.userId},
+      {sender:req.userId,receiver:userId},
+    ]
+  })
+  if(request) return next(new ErrorHandler("Friend Request Already Sent",400))
+  await Request.create({
+    sender:req.userId,
+    receiver:userId,
+  })
+  emmitEvent(req,NEW_REQUEST,[userId])
+  res
+    .status(200)
+    .json({
+      sucess: true,
+      message: "Friend Request Sent",
+    });
+});
+export { login, newUser, getProfile, logout, searchUser, sendFriendRequest };

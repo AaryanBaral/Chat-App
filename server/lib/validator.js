@@ -57,6 +57,9 @@ const renameGroupValidator = () => [
     param("id", "Please Provide chatId").notEmpty(),
     param("name", "Please Provide Name").notEmpty(),
 ];
+const sendFriendRequestValidator = () => [
+    body("userId", "Please Provide User Id").notEmpty(),
+];
 
 export {
   registerValidator,
@@ -68,5 +71,6 @@ export {
   leaveGroupValidator,
   sendAttachmentsValidator,
   chatIdValidator,
-  renameGroupValidator
+  renameGroupValidator,
+  sendFriendRequestValidator
 };
