@@ -1,5 +1,5 @@
 import express from "express";
-import { allUsers } from "../controllers/adminController.js";
+import { allChats, allUsers } from "../controllers/adminController.js";
 
 
 
@@ -9,7 +9,7 @@ route.get("/verify");
 route.get("/logout");
 route.get("/users",allUsers);
 route.get("/messages");
-route.get("/chats");
+route.get("/chats",allChats);
 route.get("/stats");
 
 

@@ -1,5 +1,6 @@
 import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chatModel.js";
+import { Message } from "../models/messageModel.js";
 import { User } from "../models/userModel.js";
 
 const allUsers = TryCatch(async (req, res, next) => {
@@ -24,4 +25,41 @@ const allUsers = TryCatch(async (req, res, next) => {
     users: transformedUsers,
   });
 });
-export { allUsers };
+
+const allChats = TryCatch(async (req, res, next) => {
+  const chats = await Chat.find({})
+    .populate("members", "name avatar")
+    .populate("creator", "name avatar");
+
+  const transformedChats = await Promise.all(
+    chats.map(async ({ members, groupChat, _id, name, creator }) => {
+      const totalMessages = await Message.countDocuments({ chat: _id });
+      return {
+        _id,
+        name,
+        groupChat,
+        creator,
+        avatar: members.slice(0, 3).map(({ avatar }) => avatar.url),
+        members: members.map(({ name, _id, avatar }) => ({
+          _id,
+          name,
+          avatar: avatar.url,
+        })),
+        creator: {
+          _id: creator?._id || "none",
+          avatar: creator?.avatar.url || "",
+        },
+        totalMembers: members.length,
+        totalMessages,
+      };
+    })
+  );
+  res.status(200).json({
+    sucess: true,
+    chats:transformedChats
+  });
+});
+const allMessages = TryCatch(async(req,res,next)=>{
+    
+})
+export { allUsers,allChats };
