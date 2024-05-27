@@ -5,7 +5,9 @@ import { errorMiddleWare } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute.js";
 import chatRoute from "./routes/chatRoute.js";
-import { createGroupChat, createMessageInAChat, createSingleChat } from "./seeders/seeds.js";
+import adminRoute from "./routes/adminRoute.js";
+
+// import { createGroupChat, createMessageInAChat, createSingleChat } from "./seeders/seeds.js";
 // import { createUser } from "./seeders/seeds.js"; only used to create fake data in the database
 
 dotenv.config({
@@ -21,6 +23,7 @@ app.use(cookieParser());
 
 app.use("/user", userRoute);
 app.use("/chat", chatRoute);
+app.use("/admin", adminRoute);
 
 app.get("/", (req, res) => {
   res.send("hellow world");

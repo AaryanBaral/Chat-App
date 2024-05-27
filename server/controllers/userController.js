@@ -162,7 +162,7 @@ const getMyFriends = TryCatch(async (req, res, next) => {
     };
   });
   if(chatId){
-    // this api is used by admin of the hat to see list of friends of the admin that are not present in a given chatId
+    // this api is used by admin of the chat to see list of friends of the admin that are not present in a given chatId
     const chat = await Chat.findById(chatId)
     const availableFriend = friends.filter((friend)=>!chat.members.includes(friend._id))
     return res.status(200).json({
