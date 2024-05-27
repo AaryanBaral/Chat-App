@@ -1,7 +1,40 @@
-import { TryCatch } from "../middlewares/error.js";
+import jwt from "jsonwebtoken";
+import { ErrorHandler, TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chatModel.js";
 import { Message } from "../models/messageModel.js";
 import { User } from "../models/userModel.js";
+import { cookieOption } from "../utils/cookie.js";
+import { adminSceretKey } from "../app.js";
+
+const adminLogin = TryCatch(async (req, res, next) => {
+  const { sceretKey } = req.body;
+
+  const isMatch = sceretKey === adminSceretKey;
+  if (!isMatch) return next(new ErrorHandler("Invalid Admin Key", 401));
+  const token = jwt.sign(sceretKey, process.env.JWT_SCECRET);
+  return res
+    .status(200)
+    .cookie("wollo-admin", token, { ...cookieOption, maxAge: 10000 * 60 * 45 })
+    .json({
+      sucess: true,
+      message: "Authenticated Sucessfully, Welcome Admin",
+    });
+});
+const adminLogout = TryCatch(async (req, res, next) => {
+  return res
+    .status(200)
+    .cookie("wollo-admin", "", { ...cookieOption, maxAge: 0 })
+    .json({
+      sucess: true,
+      message: "Logged Out Sucessfully, See You Soon Admin",
+    });
+});
+
+const getAdminData = TryCatch(async(req,res,next)=>{
+  res.status(200).json({
+    admin:true
+  })
+})
 
 const allUsers = TryCatch(async (req, res, next) => {
   const users = await User.find({});
@@ -101,13 +134,14 @@ const getDashboardStats = TryCatch(async (req, res, next) => {
       $lte: today,
     },
   }).select("createdAt");
-  const dayInMilliseconds = 1000*60*60*24
+  const dayInMilliseconds = 1000 * 60 * 60 * 24;
   const messages = new Array(7).fill(0);
-  last7DaysMessages.forEach((message)=>{
-    const indexApprox = (today.getTime()- message.createdAt.getTime())/dayInMilliseconds;
-    const index = Math.floor(indexApprox)
-    messages[6-index]++
-  })
+  last7DaysMessages.forEach((message) => {
+    const indexApprox =
+      (today.getTime() - message.createdAt.getTime()) / dayInMilliseconds;
+    const index = Math.floor(indexApprox);
+    messages[6 - index]++;
+  });
   const stats = {
     groupsCount,
     messagesCount,
@@ -120,4 +154,4 @@ const getDashboardStats = TryCatch(async (req, res, next) => {
     stats,
   });
 });
-export { allUsers, allChats, allMessages, getDashboardStats };
+export { allUsers, allChats, allMessages, getDashboardStats, adminLogin,adminLogout,getAdminData };

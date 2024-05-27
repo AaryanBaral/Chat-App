@@ -1,4 +1,7 @@
 import dotenv from "dotenv";
+dotenv.config({
+  path: "./.env",
+});
 import express from "express";
 import { connectDB } from "./connection/connectDB.js";
 import { errorMiddleWare } from "./middlewares/error.js";
@@ -10,9 +13,8 @@ import adminRoute from "./routes/adminRoute.js";
 // import { createGroupChat, createMessageInAChat, createSingleChat } from "./seeders/seeds.js";
 // import { createUser } from "./seeders/seeds.js"; only used to create fake data in the database
 
-dotenv.config({
-  path: "./.env",
-});
+export const adminSceretKey =
+process.env.ADMIN_SCERET_KEY || "WolloAdmin Aaryan Baral";
 const app = express();
 const PORT = process.env.PORT || 3000;
 connectDB(process.env.MONGO_URI);

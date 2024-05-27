@@ -147,7 +147,7 @@ const getMyNotifications = TryCatch(async (req, res, next) => {
   });
 });
 
-const getMyFriends = TryCatch(async (req, res, next) => {
+const getMyFriends = TryCatch(async (req, res, next) => { 
   const { chatId } = req.query;
   const chats = await Chat.find({
     members: req.userId,
