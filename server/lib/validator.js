@@ -64,6 +64,9 @@ const acceptFriendRequestValidator = () => [
     body("requestId", "Please Provide Request Id").notEmpty(),
     body("accept").notEmpty().withMessage("Please Add Accept").isBoolean().withMessage("Accept Must Be Boolean")
 ];
+const adminLoginValidator = () => [
+    body("sceretKey", "Please Provide Sceret Key").notEmpty(),
+];
 
 export {
   registerValidator,
@@ -78,4 +81,5 @@ export {
   renameGroupValidator,
   acceptFriendRequestValidator,
   sendFriendRequestValidator,
+  adminLoginValidator,
 };

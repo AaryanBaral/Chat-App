@@ -9,7 +9,7 @@ const cookieOption={
 }
 
 const sendToken = (res,user,code,message)=>{
-    const token = jwt.sign({_id:user._id},process.env.JWT_SECRET)
+    const token = jwt.sign({_id:user._id},process.env.JWT_SCECRET)
     return res.status(code).cookie("wollo-token",token,cookieOption).json({
         message,
         sucess:true,
