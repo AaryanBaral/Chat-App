@@ -56,30 +56,68 @@ const allChats = TryCatch(async (req, res, next) => {
   );
   res.status(200).json({
     sucess: true,
-    chats:transformedChats
+    chats: transformedChats,
   });
 });
-const allMessages = TryCatch(async(req,res,next)=>{
-    const messages = await Message.find({})
-    .populate("chat","groupChat")
-    .populate("sender","name avatar")
-    const transformedMessages = messages.map(({content,attchments,_id,sender,createdAt,chat})=>({
-        content,
-        _id,
-        attchments,
-        createdAt,
-        chat:chat._id,
-        groupChat:chat.groupChat,
-        sender:{
-            _id:sender._id,
-            name:sender.name,
-            avatar:sender.avatar.url
-        }
-    }))
-
-    res.status(200).json({
-        sucess:true,
-        messages:transformedMessages
+const allMessages = TryCatch(async (req, res, next) => {
+  const messages = await Message.find({})
+    .populate("chat", "groupChat")
+    .populate("sender", "name avatar");
+  const transformedMessages = messages.map(
+    ({ content, attchments, _id, sender, createdAt, chat }) => ({
+      content,
+      _id,
+      attchments,
+      createdAt,
+      chat: chat._id,
+      groupChat: chat.groupChat,
+      sender: {
+        _id: sender._id,
+        name: sender.name,
+        avatar: sender.avatar.url,
+      },
     })
-})
-export { allUsers,allChats,allMessages };
+  );
+
+  res.status(200).json({
+    sucess: true,
+    messages: transformedMessages,
+  });
+});
+const getDashboardStats = TryCatch(async (req, res, next) => {
+  const [groupsCount, messagesCount, usersCount, totalChatsCount] =
+    await Promise.all([
+      Chat.countDocuments({ groupChat: true }),
+      Message.countDocuments(),
+      User.countDocuments(),
+      Chat.countDocuments(),
+    ]);
+  const today = new Date();
+  const last7Days = new Date();
+  last7Days.setDate(last7Days.getDate() - 7);
+  const last7DaysMessages = await Message.find({
+    createdAt: {
+      $gte: last7Days,
+      $lte: today,
+    },
+  }).select("createdAt");
+  const dayInMilliseconds = 1000*60*60*24
+  const messages = new Array(7).fill(0);
+  last7DaysMessages.forEach((message)=>{
+    const indexApprox = (today.getTime()- message.createdAt.getTime())/dayInMilliseconds;
+    const index = Math.floor(indexApprox)
+    messages[6-index]++
+  })
+  const stats = {
+    groupsCount,
+    messagesCount,
+    usersCount,
+    totalChatsCount,
+    messagesChart: messages,
+  };
+  res.status(200).json({
+    sucess: true,
+    stats,
+  });
+});
+export { allUsers, allChats, allMessages, getDashboardStats };
