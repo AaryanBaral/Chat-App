@@ -13,7 +13,6 @@ const registerValidator = () => [
   body("name", "Please Enter Name").notEmpty(),
   body("username", "Please Enter Username").notEmpty(),
   body("password", "Please Enter Password").notEmpty(),
-  check("avatar", "Please Upload Avatar").notEmpty(),
 ];
 const loginValidator = () => [
   body("username", "Please Enter Username").notEmpty(),
@@ -44,11 +43,6 @@ const leaveGroupValidator = () => [
 ];
 const sendAttachmentsValidator = () => [
   body("chatId", "Please Provide chatId").notEmpty(),
-  check("files")
-    .notEmpty()
-    .withMessage("Please Provide Attachments")
-    .isArray({ min: 1, max: 10 })
-    .withMessage("Files must be between 1-10"),
 ];
 const chatIdValidator = () => [
     param("id", "Please Provide chatId").notEmpty(),

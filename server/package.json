@@ -4,8 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
-    "dev": "npx nodemon app.js"
+    "start": "NODE_ENV=PRODUCTION node app.js",
+    "dev": "NODE_ENV=DEVELOPMENT npx nodemon app.js"
   },
   "author": "",
   "license": "ISC",

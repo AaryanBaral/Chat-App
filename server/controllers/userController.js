@@ -9,10 +9,8 @@ import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password } = req.body;
-  if (!name || !username || !password)
-    return next(
-      new ErrorHandler("please provide all the required fields", 400)
-    );
+  const file = req.file
+  if(!file) return next(new ErrorHandler("Pleasae Upload Avatar",400))
   const avatar = {
     public_id: "dafdadsf",
     url: "rafdsae",
