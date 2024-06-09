@@ -9,8 +9,7 @@ import {Chart as ChartJS,
   ArcElement,
   Legend,
 } from 'chart.js';
-import { orange, purple } from '@mui/material/colors';
-import { orangeLight, purpleLight } from '../constants/color';
+import { orange, orangeLight, purple, purpleLight } from '../constants/color';
 import { getLast7Days } from "../../lib/features";
 
 
@@ -85,10 +84,9 @@ const doughnutChartOptions = {
 };
 
 const DoughnutChart = ({value = [], labels = [] }) => {
-
+  console.log(value)
   const data = {
     labels,
-
     datasets: [
       {
       data: value,
@@ -102,9 +100,7 @@ const DoughnutChart = ({value = [], labels = [] }) => {
   };
 
   return (
-    <div>
       <Doughnut style={{zIndex: 10}} data={data} options={doughnutChartOptions}/>
-    </div>
   )
 };
 

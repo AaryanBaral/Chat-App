@@ -526,7 +526,7 @@ export const dashboardData = {
             },
         ],
         content: "Aryan ka Message hai", 
-        _id: "sfnsdjkfsdnfkjsbnd",
+        _id: "1",
         sender: {
             avatar: "https://www.w3schools.com/howto/img_avatar.png",
             name: "Aaryan",
@@ -543,7 +543,7 @@ export const dashboardData = {
             },
         ],
         content: "Chaman ka Message hai", 
-        _id: "sfnsdrrtgdnfkjsbnd",
+        _id: "2",
         sender: {
             avatar: "https://www.w3schools.com/howto/img_avatar.png",
             name: "Chaman",

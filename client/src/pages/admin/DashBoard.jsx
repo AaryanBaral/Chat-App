@@ -15,7 +15,6 @@ import {
 import { matBlack } from "../../components/constants/color";
 import { DoughnutChart, LineChart } from "../../components/specific/Charts";
 
-
 const DashBoard = () => {
   const AppBar = (
     <Paper
@@ -60,15 +59,19 @@ const DashBoard = () => {
     <AdminLayout>
       <Container component={"main"}>
         {AppBar}
-        <Stack direction={{
-          xs: "column",
-          lg: "row",
-        }} 
-        alignItems={{
-          xs: "center",
-          lg: "stretch",
-        
-        }} flexWrap={"wrap"} justifyContent={"center"} sx={{gap: "2rem"}}>
+        <Stack
+          direction={{
+            xs: "column",
+            lg: "row",
+          }}
+          alignItems={{
+            xs: "center",
+            lg: "stretch",
+          }}
+          flexWrap={"wrap"}
+          justifyContent={"center"}
+          sx={{ gap: "2rem" }}
+        >
           <Paper
             elevation={3}
             sx={{
@@ -82,7 +85,7 @@ const DashBoard = () => {
             <Typography margin={"2rem 0"} variant="h4">
               {""}
             </Typography>
-            <LineChart value={[23,56,33,67,33,2]}/>
+            <LineChart value={[23, 56, 33, 67, 33, 2]} />
           </Paper>
           <Paper
             elevation={3}
@@ -100,8 +103,10 @@ const DashBoard = () => {
               maxWidth: "25rem",
             }}
           >
-            <DoughnutChart labels={["Single Chats", "Group Chats"]}
-            value={[23, 66]}/>
+            <DoughnutChart
+              labels={["Single Chats", "Group Chats"]}
+              value={[23, 66]}
+            />
 
             <Stack
               position={"absolute"}
@@ -123,30 +128,32 @@ const DashBoard = () => {
     </AdminLayout>
   );
 };
-const Widget = ({ title, value, Icon }) => (  
-<Paper
-  elevation={3}
-  sx={{
+const Widget = ({ title, value, Icon }) => (
+  <Paper
+    elevation={3}
+    sx={{
       padding: "2rem",
       margin: "2rem 0",
       borderRadius: "1.5rem",
       width: "20rem",
-  }}
+    }}
   >
     <Stack alignItems={"center"} spacing={"1rem"}>
       <Typography
-      sx={{
-        color: "rgba(0,0,0,0.7)",
-        borderRadius: "50%",
-        border: `5px solid ${matBlack}`,
-        width: "5rem",
-        height: "5rem", 
-        display: "flex", 
-        justifyContent: "center", 
-        alignItems: "center",
-      }}
-      >{value}</Typography>
-      <Stack direction={"row"} spacing={"1rem"} alignItems={"center"} >
+        sx={{
+          color: "rgba(0,0,0,0.7)",
+          borderRadius: "50%",
+          border: `5px solid ${matBlack}`,
+          width: "5rem",
+          height: "5rem",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {value}
+      </Typography>
+      <Stack direction={"row"} spacing={"1rem"} alignItems={"center"}>
         {Icon}
         <Typography>{title} ok</Typography>
       </Stack>

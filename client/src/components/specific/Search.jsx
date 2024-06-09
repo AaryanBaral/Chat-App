@@ -1,4 +1,4 @@
-import { Dialog, DialogTitle, InputAdornment, List, ListItem, ListItemText, Stack, TextField } from '@mui/material'
+import { Dialog, DialogTitle, InputAdornment, List, Stack, TextField } from '@mui/material'
 import {useInputValidation} from "6pp"
 import { Search as SearchIcon } from "@mui/icons-material";
 import UserItem from '../shared/UserItem';
@@ -7,7 +7,7 @@ import { sampleUsers } from '../constants/SampleData';
 
 const Search = () => {
   const search = useInputValidation("");
-  const [users,setUsers] = useState(sampleUsers)
+  const [users, ] = useState(sampleUsers)
   let isLoadingSendFriendRequest = false
   const addFriendHandler = ()=>{
 

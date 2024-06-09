@@ -1,16 +1,16 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import Header from './Header';
 import Footer from './Footer';
 import Title from '../shared/Title';
 import { Grid } from '@mui/material';
 import ChatList from '../specific/ChatList';
 import { sampleChats } from '../constants/SampleData';
-import { useParams } from 'react-router-dom';
 import Profile from '../specific/Profile';
+import { useParams } from 'react-router-dom';
 
-const AppLayout = (WrappedComponent) => {
+const AppLayout = ()=> (WrappedComponent) => {
   return (props) => {
     const { chatId } = useParams();
-
     const handleDeleteChat = (e, _id, groupChat) => {
       e.preventDefault();
       console.log("delete chat", _id, groupChat);
