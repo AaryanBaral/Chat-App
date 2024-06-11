@@ -15,6 +15,7 @@ import { NEW_ATTACHMENTS, NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/eve
 import {v4 as uuid} from "uuid"
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/messageModel.js";
+import cors from "cors"
 
 // import { createGroupChat, createMessageInAChat, createSingleChat } from "./seeders/seeds.js";
 // import { createUser } from "./seeders/seeds.js"; only used to create fake data in the database
@@ -40,11 +41,15 @@ connectDB(process.env.MONGO_URI);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors({
+  origin:["http://localhost:5173","http://localhost:4173",process.env.CURRENT_URL],
+  credentials:true
+}))
 
 
-app.use("/user", userRoute);
-app.use("/chat", chatRoute);
-app.use("/admin", adminRoute);
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/chat", chatRoute);
+app.use("/api/v1/admin", adminRoute);
 
 app.get("/", (req, res) => {
   res.send("hellow world");
