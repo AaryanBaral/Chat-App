@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense } from "react";
 import {
   Backdrop,
   Box,
@@ -11,7 +11,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { bgGradient, matBlack, orange } from "../components/constants/color";
+import { bgGradient, matBlack } from "../components/constants/color";
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
