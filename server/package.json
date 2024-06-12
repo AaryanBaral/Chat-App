@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "NODE_ENV=PRODUCTION node app.js",
-    "dev": "NODE_ENV=DEVELOPMENT npx nodemon app.js"
+    "dev": "NODE_ENV=DEVELOPMENT npx nodemon app.js",
+    "run":"NODE_ENV=PRODUCTION npx nodemon app.js"
   },
   "author": "",
   "license": "ISC",

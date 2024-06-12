@@ -4,16 +4,17 @@ import { cookieOption, sendToken } from "../utils/cookie.js";
 import { ErrorHandler, TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chatModel.js";
 import { Request } from "../models/requestModel.js";
-import { emmitEvent } from "../utils/feature.js";
+import { emmitEvent, uploadFilesToCloudinary } from "../utils/feature.js";
 import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password } = req.body;
   const file = req.file
   if(!file) return next(new ErrorHandler("Pleasae Upload Avatar",400))
+  const result = await uploadFilesToCloudinary([file])
   const avatar = {
-    public_id: "dafdadsf",
-    url: "rafdsae",
+    public_id: result[0].public_id,
+    url: result[0].url,
   };
   const user = await User.create({
     name,
@@ -35,10 +36,9 @@ const login = TryCatch(async (req, res, next) => {
 });
 const getProfile = TryCatch(async (req, res, next) => {
   const user = await User.findById(req.userId);
-  console.log(user);
   res.status(200).json({
     sucess: true,
-    user: "user",
+    user: user,
   });
 });
 const logout = TryCatch(async (req, res, next) => {

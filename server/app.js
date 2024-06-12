@@ -18,8 +18,8 @@ import { Message } from "./models/messageModel.js";
 import {v2 as cloudnary} from "cloudinary"
 import cors from "cors"
 
-// import { createGroupChat, createMessageInAChat, createSingleChat } from "./seeders/seeds.js";
-// import { createUser } from "./seeders/seeds.js"; only used to create fake data in the database
+import { createGroupChat, createMessageInAChat, createSingleChat,createMessage } from "./seeders/seeds.js";
+import { createUser } from "./seeders/seeds.js"; // only used to create fake data in the database
 
 
 
@@ -45,14 +45,14 @@ cloudnary.config({
   api_secret:process.env.CLOUDINARY_API_SECRET,
 })
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
   origin:["http://localhost:5173","http://localhost:4173",process.env.CURRENT_URL],
   credentials:true
 }))
-
-
+// createMessage(100)
+// createGroupChat(50)
+// createMessageInAChat("6669c4e9dd3896a50d1708d8",50)
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/chat", chatRoute);
 app.use("/api/v1/admin", adminRoute);
