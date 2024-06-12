@@ -13,7 +13,7 @@ const initialState = {
     groupChat: false,
   },
 };
-const authSlice = createSlice({
+const miscSlice = createSlice({
   name: "misc",
   initialState,
   reducers: {
@@ -46,7 +46,7 @@ const authSlice = createSlice({
     },
   },
 });
-export default authSlice;
+export default miscSlice;
 
 export const {
   setIsNewGroup,
@@ -58,4 +58,4 @@ export const {
   setIsMobileMenuFriend,
   setUploadingLoader,
   setSelectedDeletedChat,
-} = authSlice.actions;
+} = miscSlice.actions;
