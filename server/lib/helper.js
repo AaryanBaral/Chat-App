@@ -7,6 +7,6 @@ const getSockets = (users = [])=>{
 }
 
 const getBase64 = (file)=>{
-    return `data:${file.memetype};base64,${file.buffer.toString("base64")}`
+    return `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
 }
 export {getOtherMember,getSockets,getBase64}

@@ -43,7 +43,7 @@ const createSingleChat = async (numChats) => {
     }
     await Promise.all(chatsPromise);
     console.log("Chat created sucessfully");
-    process.exit();
+    process.exit(1);
   } catch (error) {
     console.log(error);
     process.exit(1);
@@ -70,9 +70,11 @@ const createGroupChat = async (numChats) => {
         members,
         creator: members[0],
       });
+      chatsPromise.push(chat)
     }
+    await Promise.all(chatsPromise)
     console.log("Chat created sucessfully");
-    process.exit();
+    process.exit(1);
   } catch (error) {
     console.log(error);
     process.exit(1);
@@ -96,7 +98,7 @@ const createMessage = async (numMessages) => {
     }
     await Promise.all(messagesPromise);
     console.log("message created sucessfully");
-    process.exit();
+    process.exit(1);
   } catch (error) {
     console.log(error);
     process.exit(1);
@@ -118,7 +120,7 @@ const createMessageInAChat = async(chatId,numMessages)=>{
           }
         await Promise.all(messagesPromise)
         console.log("messages created Sucessfully");
-        process.exit();
+        process.exit(1);
 
     } catch (error) {
         console.log(error);

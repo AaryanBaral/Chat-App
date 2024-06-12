@@ -32,7 +32,7 @@ route.post(
 
 route.use(isAuthenticated); // authentication is made compulsory to access any of the folowing routes
 route.get("/me", getProfile);
-route.post("/logout", logout);
+route.get("/logout", logout);
 route.get("/search", searchUser);
 route.put(
   "/sendrequest",

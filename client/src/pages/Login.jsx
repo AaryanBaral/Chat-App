@@ -39,7 +39,6 @@ const Login = () => {
       },
     };
     try {
-      console.log(typeof username);
       const { data } = await axios.post(
         `${server}/api/v1/user/login`,
         {
@@ -69,7 +68,6 @@ const Login = () => {
       },
     };
     try {
-      console.log(typeof username);
       const { data } = await axios.post(
         `${server}/api/v1/user/new`,
         formData,

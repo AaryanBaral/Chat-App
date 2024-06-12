@@ -13,6 +13,7 @@ const ChatItem = ({
   handleDeleteChat,
   groupChat = false
 }) => {
+  console.log(avatar)
   return (
     <Link
       sx={{ padding: "0" }}

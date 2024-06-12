@@ -36,10 +36,9 @@ const login = TryCatch(async (req, res, next) => {
 });
 const getProfile = TryCatch(async (req, res, next) => {
   const user = await User.findById(req.userId);
-  console.log(user);
   res.status(200).json({
     sucess: true,
-    user: "user",
+    user: user,
   });
 });
 const logout = TryCatch(async (req, res, next) => {

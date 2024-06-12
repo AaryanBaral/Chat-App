@@ -19,12 +19,18 @@ import { Suspense, useState } from "react";
 import { orange } from "../constants/color";
 import { useNavigate } from "react-router-dom";
 import { lazy } from "react";
+import axios from "axios";
+import { server } from "../../../../server/constants/configure";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { userNotExists } from "../../redux/reducers/auth";
 
 const SearchDialog = lazy(() => import("../specific/Search"));
 const Notification = lazy(() => import("../specific/Notification"));
 const NewGroup = lazy(() => import("../specific/NewGroup"));
 
 const Header = () => {
+  const dispatch = useDispatch();
   const [isSearch, setIsSearch] = useState(false);
   const [isNewGroup, setIsNewGroup] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
@@ -47,8 +53,18 @@ const Header = () => {
     setIsNotification((prev) => !prev);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log("Logout");
+    try {
+      const {data} = await axios.get(`${server}/api/v1/user/logout`,{
+        withCredentials:true
+      })
+      toast.success(data.message)
+      dispatch(userNotExists())
+    } catch (error) {
+      toast.error(error?.response?.data?.message||"Something went wrong")
+      console.log(error)
+    }
   };
 
   const navigateToGroup = () => {
