@@ -2,7 +2,7 @@ import AdminLayout from '../../components/layout/AdminLayout';
 import Table from '../../components/shared/Table';
 import { useEffect, useState } from 'react';
 import { Avatar } from '@mui/material';
-import { dashboardData } from '../../components/constants/SampleData';
+import { dashboardData } from '../../constants/SampleData';
 import { transformImage } from '../../lib/features';
 
 const columns = [

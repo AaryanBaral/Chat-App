@@ -8,7 +8,7 @@ import { emmitEvent, uploadFilesToCloudinary } from "../utils/feature.js";
 import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 const newUser = TryCatch(async (req, res, next) => {
-  const { name, username, password } = req.body;
+  const { name, username, password ,bio} = req.body;
   const file = req.file
   if(!file) return next(new ErrorHandler("Pleasae Upload Avatar",400))
   const result = await uploadFilesToCloudinary([file])
@@ -20,6 +20,7 @@ const newUser = TryCatch(async (req, res, next) => {
     name,
     username,
     password,
+    bio,
     avatar,
   });
   sendToken(res, user, 201, "User Created");
@@ -37,7 +38,7 @@ const login = TryCatch(async (req, res, next) => {
 const getProfile = TryCatch(async (req, res, next) => {
   const user = await User.findById(req.userId);
   res.status(200).json({
-    sucess: true,
+    success: true,
     user: user,
   });
 });
@@ -46,8 +47,8 @@ const logout = TryCatch(async (req, res, next) => {
     .status(200)
     .cookie("wollo-token", "", { ...cookieOption, maxAge: 0 })
     .json({
-      sucess: true,
-      message: "Logged out sucessfully",
+      success: true,
+      message: "Logged out successfully",
     });
 });
 const searchUser = TryCatch(async (req, res, next) => {
@@ -67,7 +68,7 @@ const searchUser = TryCatch(async (req, res, next) => {
     avatar: avatar.url,
   }));
   res.status(200).json({
-    sucess: true,
+    success: true,
     users,
   });
 });
@@ -87,7 +88,7 @@ const sendFriendRequest = TryCatch(async (req, res, next) => {
   });
   emmitEvent(req, NEW_REQUEST, [userId]);
   res.status(200).json({
-    sucess: true,
+    success: true,
     message: "Friend Request Sent",
   });
 });
@@ -105,8 +106,8 @@ const acceptFriendRequest = TryCatch(async (req, res, next) => {
   if (!accept) {
     await request.deleteOne();
     return res.status(200).json({
-      sucess: true,
-      message: "Friend Request Sent",
+      success: true,
+      message: "Friend Request Rejected",
     });
   }
   const members = [request.sender._id, request.receiver._id];
@@ -119,7 +120,7 @@ const acceptFriendRequest = TryCatch(async (req, res, next) => {
   ]);
   emmitEvent(req, REFETCH_CHATS, members);
   return res.status(200).json({
-    sucess: true,
+    success: true,
     message: "Friend Request Accepted",
     senderId: request.sender._id,
   });
@@ -137,7 +138,7 @@ const getMyNotifications = TryCatch(async (req, res, next) => {
     },
   }));
   res.status(200).json({
-    sucess: true,
+    success: true,
     allRequests,
   });
 });
@@ -161,13 +162,13 @@ const getMyFriends = TryCatch(async (req, res, next) => {
     const chat = await Chat.findById(chatId)
     const availableFriend = friends.filter((friend)=>!chat.members.includes(friend._id))
     return res.status(200).json({
-      sucess:true,
+      success:true,
       availableFriend
     })
   }
   else{
     return res.status(200).json({
-      sucess:true,
+      success:true,
       friends
     })
   }

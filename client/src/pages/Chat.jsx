@@ -3,11 +3,11 @@ import { Fragment } from 'react'
 import AppLayout from '../components/layout/AppLayout';
 import { IconButton, Stack } from '@mui/material';
 import { useRef } from 'react';
-import { grayColor, orange } from '../components/constants/color';
+import { grayColor, orange } from '../constants/color';
 import { AttachFile as AttachFileIcon, Send as SendIcon} from '@mui/icons-material';
 import { InputBox } from '../components/Styles/StyleComponent';
 import FileMenu from '../components/dialoge/FileMenu';
-import { sampleMessage } from '../components/constants/SampleData';
+import { sampleMessage } from '../constants/SampleData';
 import MessageComponent from '../components/shared/MessageComponent';
 
 const Chat = () => {

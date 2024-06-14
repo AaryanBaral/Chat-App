@@ -9,7 +9,7 @@ import {Chart as ChartJS,
   ArcElement,
   Legend,
 } from 'chart.js';
-import { orange, orangeLight, purple, purpleLight } from '../constants/color';
+import { orange, orangeLight, purple, purpleLight } from '../../constants/color';
 import { getLast7Days } from "../../lib/features";
 
 

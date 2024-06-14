@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useInputValidation } from "6pp";
-import { bgGradient } from "../../components/constants/color";
+import { bgGradient } from "../../constants/color";
 import { Navigate } from "react-router-dom";
 
 const isAdmin = true
