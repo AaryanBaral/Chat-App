@@ -17,7 +17,6 @@ const AppLayout = () => (WrappedComponent) => {
     const { chatId } = useParams();
     const dispatch = useDispatch();
     const socket = getSocket()
-    console.log(socket.id);
     const { isLoading, isError, error, refetch, data } = useMyChatsQuery("");
     const { isMobile } = useSelector((state) => state.misc);
     const { user } = useSelector((state) => state.auth);
@@ -27,9 +26,6 @@ const AppLayout = () => (WrappedComponent) => {
     };
     const handleMobileClose = () => {
       dispatch(setIsMobile(false));
-    };
-    const handleMobileOpen = () => {
-      dispatch(setIsMobile(true));
     };
     useErrors([{isError,error}])
 
@@ -65,11 +61,12 @@ const AppLayout = () => (WrappedComponent) => {
                 chats={data?.chats}
                 chatId={chatId}
                 handleDeleteChat={handleDeleteChat}
+
               />
             )}
           </Grid>
           <Grid item xs={12} sm={8} md={5} lg={6} height={"100%"}>
-            <WrappedComponent {...props} />
+            <WrappedComponent {...props} chatId={chatId} user={user}/>
           </Grid>
           <Grid
             item

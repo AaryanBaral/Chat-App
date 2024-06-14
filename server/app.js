@@ -32,10 +32,6 @@ import { createUser } from "./seeders/seeds.js"; // only used to create fake dat
 import { corsOption } from "./constants/configure.js";
 import { socketAuthenticator } from "./middlewares/auth.js";
 
-const user = {
-  _id: "asdfasdfa",
-  name: "sdfasdfas",
-};
 
 export const adminSceretKey =
   process.env.ADMIN_SCERET_KEY || "WolloAdmin Aaryan Baral";
@@ -45,7 +41,7 @@ const io = new Server(server, {
   cors: corsOption,
 });
 
-const userSocketIds = new Map();
+export const userSocketIds = new Map();
 const PORT = process.env.PORT || 3000;
 connectDB(process.env.MONGO_URI);
 cloudnary.config({
@@ -74,11 +70,14 @@ io.use((socket,next)=>{
 })
 
 io.on("connect", (socket) => {
+  const user = socket.user
   userSocketIds.set(user._id.toString(), socket.id);
   console.log("a user connected", socket.id);
 
   console.log(userSocketIds);
   socket.on(NEW_MESSAGE, async ({ chatId, message, members }) => {
+
+
     const messageForRealTime = {
       content: message,
       id: uuid(),
@@ -94,6 +93,8 @@ io.on("connect", (socket) => {
       sender: user._id,
       chat: chatId,
     };
+
+    console.log("emmitting message for realtime", messageForRealTime)
     const usersSocket = getSockets(members);
     io.to(usersSocket).emit(NEW_MESSAGE, {
       chatId,
