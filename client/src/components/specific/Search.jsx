@@ -2,23 +2,34 @@ import { Dialog, DialogTitle, InputAdornment, List, Stack, TextField } from '@mu
 import {useInputValidation} from "6pp"
 import { Search as SearchIcon } from "@mui/icons-material";
 import UserItem from '../shared/UserItem';
-import { useState } from 'react';
-import { sampleUsers } from '../constants/SampleData';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsSearch } from '../../redux/reducers/misc';
+import { useLazySearchUserQuery } from '../../redux/api/api';
 
 const Search = () => {
   const search = useInputValidation("");
-  const [users, ] = useState(sampleUsers)
+  const [users,setUsers ] = useState([])
   const dispatch = useDispatch()
   let isLoadingSendFriendRequest = false
   const {isSearch} = useSelector(state=>state.misc)
+  const [searchUser] = useLazySearchUserQuery()
   const addFriendHandler = ()=>{
 
   }  
   const closeSearch = ()=>{
     dispatch(setIsSearch(false));
   }
+
+  useEffect(()=>{
+    const timeOutId= setTimeout(()=>{
+      searchUser(search.value).then(({data})=> setUsers(data.users))
+      .catch((err)=>console.log(err))
+    },500)
+    return ()=>{
+      clearTimeout(timeOutId)
+    }
+  },[search.value])
   return (
   <Dialog open={isSearch} onClose={closeSearch}>
     <Stack p={"2rem"} direction={"column"} width={"25rem"}>
