@@ -11,6 +11,7 @@ const validatorHandler = (req, res, next) => {
 };
 const registerValidator = () => [
   body("name", "Please Enter Name").notEmpty(),
+  body("bio", "Please Enter Bio").notEmpty(),
   body("username", "Please Enter Username").notEmpty(),
   body("password", "Please Enter Password").notEmpty(),
 ];

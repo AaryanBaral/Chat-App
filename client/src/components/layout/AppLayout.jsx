@@ -17,6 +17,7 @@ const AppLayout = () => (WrappedComponent) => {
     const dispatch = useDispatch();
     const { isLoading, isError, error, refetch, data } = useMyChatsQuery("");
     const { isMobile } = useSelector((state) => state.misc);
+    const { user } = useSelector((state) => state.auth);
     const handleDeleteChat = (e, _id, groupChat) => {
       e.preventDefault();
       console.log("delete chat", _id, groupChat);
@@ -78,7 +79,7 @@ const AppLayout = () => (WrappedComponent) => {
               bgcolor: "rgba(0,0,0,0.85)",
             }}
           >
-            <Profile />
+            <Profile user = {user} />
           </Grid>
         </Grid>
         <Footer />
