@@ -11,7 +11,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { bgGradient, matBlack } from "../components/constants/color";
+import { bgGradient, matBlack } from "../constants/color";
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
@@ -22,7 +22,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import AvatarCard from "../components/shared/AvatarCard";
-import { sampleChats, sampleUsers } from "../components/constants/SampleData";
+import { sampleChats, sampleUsers } from "../constants/SampleData";
 import { Link } from "../components/Styles/StyleComponent";
 import { useEffect } from "react";
 import UserItem from "../components/shared/UserItem";

@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogTitle, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { sampleUsers } from '../constants/SampleData';
+import { sampleUsers } from '../../constants/SampleData';
 import { useInputValidation } from '6pp';
 import UserItem from '../shared/UserItem';
 

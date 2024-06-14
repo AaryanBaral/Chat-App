@@ -16,15 +16,15 @@ import {
   Notifications as NotificationIcon,
 } from "@mui/icons-material";
 import { Suspense, useState } from "react";
-import { orange } from "../constants/color";
+import { orange } from "../../constants/color";
 import { useNavigate } from "react-router-dom";
 import { lazy } from "react";
 import axios from "axios";
-import { server } from "../../../../server/constants/configure";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { userNotExists } from "../../redux/reducers/auth";
 import { setIsMobile, setIsNotification, setIsSearch } from "../../redux/reducers/misc";
+import { server } from "../../constants/configure";
 
 const SearchDialog = lazy(() => import("../specific/Search"));
 const Notification = lazy(() => import("../specific/Notification"));
