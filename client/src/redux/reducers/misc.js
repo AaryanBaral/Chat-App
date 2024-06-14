@@ -6,14 +6,14 @@ const initialState = {
   isFileMenu: false,
   isSearch: false,
   isDeleteMenu: false,
-  isMobileMenuFriend: false,
+  isMobile: false,
   uploadingLoader: false,
   selectedDeletedChat: {
     chatId: "",
     groupChat: false,
   },
 };
-const authSlice = createSlice({
+const miscSlice = createSlice({
   name: "misc",
   initialState,
   reducers: {
@@ -35,8 +35,8 @@ const authSlice = createSlice({
     setIsDeleteMenu: (state, action) => {
       state.isDeleteMenu = action.payload;
     },
-    setIsMobileMenuFriend: (state, action) => {
-      state.isMobileMenuFriend = action.payload;
+    setIsMobile: (state, action) => {
+      state.isMobile = action.payload;
     },
     setUploadingLoader: (state, action) => {
       state.uploadingLoader = action.payload;
@@ -46,7 +46,7 @@ const authSlice = createSlice({
     },
   },
 });
-export default authSlice;
+export default miscSlice;
 
 export const {
   setIsNewGroup,
@@ -55,7 +55,7 @@ export const {
   setIsFileMenu,
   setIsSearch,
   setIsDeleteMenu,
-  setIsMobileMenuFriend,
+  setIsMobile,
   setUploadingLoader,
   setSelectedDeletedChat,
-} = authSlice.actions;
+} = miscSlice.actions;
