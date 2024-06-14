@@ -1,11 +1,10 @@
 import AdminLayout from '../../components/layout/AdminLayout';
-import Table from '../../components/shared/Table';
 import { useEffect, useState } from 'react';
 import AvatarCard from '../../components/shared/AvatarCard';
-import Avatar from '../../components/shared/Avatar';
 import { Stack } from '@mui/material';
 import { dashboardData } from '../../components/constants/SampleData';
 import { transformImage } from '../../lib/features';
+import Table from '../../components/shared/Table';
 
 const columns = [
   {
@@ -39,7 +38,7 @@ const columns = [
     headerClassName: "table-header",
     width: 400,
     renderCell : (params) => (
-      <Avatar max={100} avatar= {params.row.members}/>
+      <AvatarCard max={100} avatar= {params.row.members}/>
     ),
   },
   {
@@ -55,7 +54,7 @@ const columns = [
     width: 250,
     renderCell : (params) => (
       <Stack direction="row" alignItems= "center" spacing={"1rem"}>
-        <Avatar src = {params.row.creator.avatar} alt={params.row.creator.name}/>
+        <AvatarCard  src = {params.row.creator.avatar} alt={params.row.creator.name}/>
         <span>{params.row.creator.name}</span>
       </Stack>
     ),
@@ -87,7 +86,7 @@ const ChatManagement = () => {
 
   return (
     <AdminLayout>
-      <Table heading={"All Chats"} columns={columns} rows={rows}/>
+      <Table heading={'All Chats'} columns={columns} rows={rows} />
     </AdminLayout>
   );
 };

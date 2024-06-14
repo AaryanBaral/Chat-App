@@ -1,19 +1,39 @@
-import { Dialog, DialogTitle, InputAdornment, List, ListItem, ListItemText, Stack, TextField } from '@mui/material'
+import { Dialog, DialogTitle, InputAdornment, List, Stack, TextField } from '@mui/material'
 import {useInputValidation} from "6pp"
 import { Search as SearchIcon } from "@mui/icons-material";
 import UserItem from '../shared/UserItem';
-import { useState } from 'react';
-import { sampleUsers } from '../constants/SampleData';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsSearch } from '../../redux/reducers/misc';
+import { useLazySearchUserQuery, useSendFriendRequestMutation } from '../../redux/api/api';
+import { useAsyncMutuation } from '../../hooks/hook';
 
 const Search = () => {
   const search = useInputValidation("");
-  const [users,setUsers] = useState(sampleUsers)
-  let isLoadingSendFriendRequest = false
-  const addFriendHandler = ()=>{
+  const [sendFriendRequest,isLoadingSendFriendRequest] = useAsyncMutuation(useSendFriendRequestMutation)
+  const [users,setUsers ] = useState([])
+  const dispatch = useDispatch()
+  const {isSearch} = useSelector(state=>state.misc)
+  const [searchUser] = useLazySearchUserQuery()
+  const addFriendHandler = async (id)=>{
+    await sendFriendRequest("Sending friend request", {userId:id})
 
   }  
+  const closeSearch = ()=>{
+    dispatch(setIsSearch(false));
+  }
+
+  useEffect(()=>{
+    const timeOutId= setTimeout(()=>{
+      searchUser(search.value).then(({data})=> setUsers(data.users))
+      .catch((err)=>console.log(err))
+    },500)
+    return ()=>{
+      clearTimeout(timeOutId)
+    }
+  },[search.value])
   return (
-  <Dialog open>
+  <Dialog open={isSearch} onClose={closeSearch}>
     <Stack p={"2rem"} direction={"column"} width={"25rem"}>
       <DialogTitle  textAlign={"center"}>Find People</DialogTitle>
       <TextField label="" value={search.value} onChange={search.changeHandler}

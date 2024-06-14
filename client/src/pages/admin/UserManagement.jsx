@@ -3,7 +3,7 @@ import Table from '../../components/shared/Table';
 import { useEffect, useState } from 'react';
 import { Avatar } from '@mui/material';
 import { dashboardData } from '../../components/constants/SampleData';
-import { transformImage } from '../../utils/transformImage';
+import { transformImage } from '../../lib/features';
 
 const columns = [
   {
@@ -54,7 +54,7 @@ const UserManagement = () => {
       dashboardData.chats.map((i) => ({
         ...i,
         id: i._id,
-        avatar: i.image.map((i) => transformImage(i, 50)),
+        avatar: i.avatar.map((i) => transformImage(i, 50)),
       }))
     );
     

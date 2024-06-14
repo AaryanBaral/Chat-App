@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import {
   Button,
   Container,
@@ -6,7 +6,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useFileHandler, useInputValidation, useStrongPassword } from "6pp";
+import { useInputValidation } from "6pp";
 import { bgGradient } from "../../components/constants/color";
 import { Navigate } from "react-router-dom";
 

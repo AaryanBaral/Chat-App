@@ -13,30 +13,37 @@ import {
   Add as AddIcon,
   Group as GroupIcon,
   Logout as LogoutIcon,
-  Notifications as NotificationIcon
+  Notifications as NotificationIcon,
 } from "@mui/icons-material";
 import { Suspense, useState } from "react";
 import { orange } from "../constants/color";
 import { useNavigate } from "react-router-dom";
 import { lazy } from "react";
+import axios from "axios";
+import { server } from "../../../../server/constants/configure";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { userNotExists } from "../../redux/reducers/auth";
+import { setIsMobile, setIsSearch } from "../../redux/reducers/misc";
 
 const SearchDialog = lazy(() => import("../specific/Search"));
 const Notification = lazy(() => import("../specific/Notification"));
 const NewGroup = lazy(() => import("../specific/NewGroup"));
 
 const Header = () => {
-  const [isSearch, setIsSearch] = useState(false);
+  const dispatch = useDispatch();
+  const {isSearch} = useSelector(state=>state.misc)
   const [isNewGroup, setIsNewGroup] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
 
   const navigate = useNavigate();
 
   const handleMobile = () => {
-    console.log("Mobile");
+    dispatch(setIsMobile(true));
   };
 
-  const toggleSearch = () => {
-    setIsSearch((prev) => !prev);
+  const openSearch = () => {
+    dispatch(setIsSearch(true));
   };
 
   const toggleNewGroup = () => {
@@ -47,8 +54,18 @@ const Header = () => {
     setIsNotification((prev) => !prev);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log("Logout");
+    try {
+      const { data } = await axios.get(`${server}/api/v1/user/logout`, {
+        withCredentials: true,
+      });
+      toast.success(data.message);
+      dispatch(userNotExists());
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+      console.log(error);
+    }
   };
 
   const navigateToGroup = () => {
@@ -77,11 +94,31 @@ const Header = () => {
             </Box>
             <Box sx={{ flexGrow: 1 }} />
             <Box>
-              <IconBtn title="Search" icon={<SearchIcon />} onClick={toggleSearch} />
-              <IconBtn title="New Group" icon={<AddIcon />} onClick={toggleNewGroup} />
-              <IconBtn title="Manage Groups" icon={<GroupIcon />} onClick={navigateToGroup} />
-              <IconBtn title="Notification" icon={<NotificationIcon />} onClick={toggleNotification} />
-              <IconBtn title="Logout" icon={<LogoutIcon />} onClick={handleLogout} />
+              <IconBtn
+                title="Search"
+                icon={<SearchIcon />}
+                onClick={openSearch}
+              />
+              <IconBtn
+                title="New Group"
+                icon={<AddIcon />}
+                onClick={toggleNewGroup}
+              />
+              <IconBtn
+                title="Manage Groups"
+                icon={<GroupIcon />}
+                onClick={navigateToGroup}
+              />
+              <IconBtn
+                title="Notification"
+                icon={<NotificationIcon />}
+                onClick={toggleNotification}
+              />
+              <IconBtn
+                title="Logout"
+                icon={<LogoutIcon />}
+                onClick={handleLogout}
+              />
             </Box>
           </Toolbar>
         </AppBar>
