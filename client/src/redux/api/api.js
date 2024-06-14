@@ -13,15 +13,25 @@ const api = createApi({
             }),
             providesTags:["Chat"],
         }),
+
         searchUser : builder.query({
             query:(name)=>({
                 url:`user/search?name=${name}`,
                 credentials:"include"
             }),
             providesTags:["User"],
-        })
+        }),
+        sendFriendRequest : builder.mutation({
+            query:(data)=>({
+                url:`user/sendrequest`,
+                credentials:"include",
+                body:data,
+                method:"PUT"
+            }),
+            providesTags:["User"],
+        }),
     })
 });
 
 export default api;
-export const {useMyChatsQuery,useLazySearchUserQuery} = api
+export const {useMyChatsQuery,useLazySearchUserQuery,useSendFriendRequestMutation} = api
