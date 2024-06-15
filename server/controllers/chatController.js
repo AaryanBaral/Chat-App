@@ -303,7 +303,7 @@ const renameGroup = TryCatch(async (req, res, next) => {
 });
 const getMessages = TryCatch(async(req,res,next)=>{
   const chatId = req.params.id
-  const {page = 1} = req.body
+  const {page = 1} = req.query
   const limit =10
   const skip = (page-1)*limit
 
