@@ -12,7 +12,7 @@ import {
   CurveButton,
   SearchField,
 } from "../../components/Styles/StyleComponent";
-import { matBlack } from "../../components/constants/color";
+import { matBlack } from "../../constants/color";
 import { DoughnutChart, LineChart } from "../../components/specific/Charts";
 
 const DashBoard = () => {

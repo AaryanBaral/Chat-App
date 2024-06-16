@@ -10,22 +10,22 @@ import { useMyChatsQuery } from "../../redux/api/api";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsMobile } from "../../redux/reducers/misc";
 import { useErrors } from "../../hooks/hook";
+import { getSocket } from "../../socket";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
     const { chatId } = useParams();
     const dispatch = useDispatch();
+    const socket = getSocket()
     const { isLoading, isError, error, refetch, data } = useMyChatsQuery("");
     const { isMobile } = useSelector((state) => state.misc);
+    const { user } = useSelector((state) => state.auth);
     const handleDeleteChat = (e, _id, groupChat) => {
       e.preventDefault();
       console.log("delete chat", _id, groupChat);
     };
     const handleMobileClose = () => {
       dispatch(setIsMobile(false));
-    };
-    const handleMobileOpen = () => {
-      dispatch(setIsMobile(true));
     };
     useErrors([{isError,error}])
 
@@ -61,11 +61,12 @@ const AppLayout = () => (WrappedComponent) => {
                 chats={data?.chats}
                 chatId={chatId}
                 handleDeleteChat={handleDeleteChat}
+
               />
             )}
           </Grid>
           <Grid item xs={12} sm={8} md={5} lg={6} height={"100%"}>
-            <WrappedComponent {...props} />
+            <WrappedComponent {...props} chatId={chatId} user={user}/>
           </Grid>
           <Grid
             item
@@ -78,7 +79,7 @@ const AppLayout = () => (WrappedComponent) => {
               bgcolor: "rgba(0,0,0,0.85)",
             }}
           >
-            <Profile />
+            <Profile user = {user} />
           </Grid>
         </Grid>
         <Footer />

@@ -18,7 +18,7 @@ import {
 } from "@mui/icons-material";
 import { useState } from "react";
 import { Link as LinkComponent, Navigate, useLocation } from "react-router-dom";
-import { matBlack } from "../constants/color";
+import { matBlack } from "../../constants/color";
 
 const Link = styled(LinkComponent)`
   text-decoration: none;

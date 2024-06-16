@@ -2,7 +2,7 @@ import AdminLayout from '../../components/layout/AdminLayout';
 import { useEffect, useState } from 'react';
 import AvatarCard from '../../components/shared/AvatarCard';
 import { Stack } from '@mui/material';
-import { dashboardData } from '../../components/constants/SampleData';
+import { dashboardData } from '../../constants/SampleData';
 import { transformImage } from '../../lib/features';
 import Table from '../../components/shared/Table';
 

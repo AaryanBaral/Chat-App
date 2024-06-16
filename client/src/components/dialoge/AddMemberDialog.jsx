@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogTitle, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { sampleUsers } from "../constants/SampleData";
+import { sampleUsers } from "../../constants/SampleData";
 import UserItem from "../shared/UserItem";
 
 const AddMemberDialog = ({ addMembers, isLoadingAddMember, chatId, styling = {} }) => {

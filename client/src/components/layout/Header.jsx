@@ -16,15 +16,15 @@ import {
   Notifications as NotificationIcon,
 } from "@mui/icons-material";
 import { Suspense, useState } from "react";
-import { orange } from "../constants/color";
+import { orange } from "../../constants/color";
 import { useNavigate } from "react-router-dom";
 import { lazy } from "react";
 import axios from "axios";
-import { server } from "../../../../server/constants/configure";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { userNotExists } from "../../redux/reducers/auth";
-import { setIsMobile, setIsSearch } from "../../redux/reducers/misc";
+import { setIsMobile, setIsNotification, setIsSearch } from "../../redux/reducers/misc";
+import { server } from "../../constants/configure";
 
 const SearchDialog = lazy(() => import("../specific/Search"));
 const Notification = lazy(() => import("../specific/Notification"));
@@ -32,9 +32,8 @@ const NewGroup = lazy(() => import("../specific/NewGroup"));
 
 const Header = () => {
   const dispatch = useDispatch();
-  const {isSearch} = useSelector(state=>state.misc)
+  const {isSearch,isNotification} = useSelector(state=>state.misc)
   const [isNewGroup, setIsNewGroup] = useState(false);
-  const [isNotification, setIsNotification] = useState(false);
 
   const navigate = useNavigate();
 
@@ -50,8 +49,8 @@ const Header = () => {
     setIsNewGroup((prev) => !prev);
   };
 
-  const toggleNotification = () => {
-    setIsNotification((prev) => !prev);
+  const openNotification = () => {
+    dispatch(setIsNotification(true))
   };
 
   const handleLogout = async () => {
@@ -112,7 +111,7 @@ const Header = () => {
               <IconBtn
                 title="Notification"
                 icon={<NotificationIcon />}
-                onClick={toggleNotification}
+                onClick={openNotification}
               />
               <IconBtn
                 title="Logout"

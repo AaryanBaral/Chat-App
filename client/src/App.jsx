@@ -2,11 +2,12 @@ import {lazy, Suspense, useEffect} from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import {LayoutLoader} from "./components/layout/Loader"
-import { server } from '../../server/constants/configure'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { userExists, userNotExists } from './redux/reducers/auth'
 import {Toaster} from "react-hot-toast"
+import { SocketProvider } from './socket'
+import { server } from './constants/configure'
 
 const Home = lazy(()=> import("./pages/Home") )
 const Group = lazy(()=> import("./pages/Group") )
@@ -35,7 +36,9 @@ const App = () => {
     <BrowserRouter>
       <Suspense fallback={<LayoutLoader/>}>
       <Routes>
-      <Route element={<ProtectedRoute user={user}/>}>
+      <Route element={<SocketProvider>
+        <ProtectedRoute user={user}/>
+      </SocketProvider>}>
         <Route exact path='/' element={<Home/>}/>
         <Route exact path='/chat/:chatId' element={<Chat/>}/>
         <Route exact path='/groups' element={<Group/>}/>

@@ -24,7 +24,7 @@ const newGroupChat = TryCatch(async (req, res, next) => {
   emmitEvent(req, ALERT, allMembers, `Welcome to ${name} group`);
   emmitEvent(req, REFETCH_CHATS, members, `Welcome to ${name} group`);
   return res.status(201).json({
-    sucess: true,
+    success: true,
     message: "Group chat created",
   });
 });
@@ -52,7 +52,7 @@ const getMychats = TryCatch(async (req, res, next) => {
     };
   });
   return res.status(200).json({
-    sucess: true,
+    success: true,
     chats: transformedChats,
   });
 });
@@ -73,7 +73,7 @@ const getMyGroups = TryCatch(async (req, res, next) => {
     };
   });
   return res.status(200).json({
-    sucess: true,
+    success: true,
     message: groups,
   });
 });
@@ -108,8 +108,8 @@ const addMembers = TryCatch(async (req, res, next) => {
   );
   emmitEvent(req, REFETCH_CHATS, chats.members);
   return res.status(200).json({
-    sucess: true,
-    mesage: "Members added sucesssfully ",
+    success: true,
+    mesage: "Members added successsfully ",
   });
 });
 
@@ -145,8 +145,8 @@ const removeMember = TryCatch(async (req, res, next) => {
   );
   emmitEvent(req, REFETCH_CHATS, chat.members);
   return res.status(200).json({
-    sucess: true,
-    mesage: "Member removed sucesssfully ",
+    success: true,
+    mesage: "Member removed successsfully ",
   });
 });
 
@@ -188,7 +188,7 @@ const leaveGroup = TryCatch(async (req, res, next) => {
     `${user.name} has been removed from the group`
   );
   return res.status(200).json({
-    sucess: true,
+    success: true,
     mesage: `${user.name} has left the group`,
   });
 });
@@ -227,7 +227,7 @@ const sendAttachments = TryCatch(async (req, res, next) => {
   });
   emmitEvent(req, NEW_MESSAGE_ALERT, chat.members, { chatId });
   return res.status(200).json({
-    sucess: true,
+    success: true,
     message,
   });
 });
@@ -245,14 +245,14 @@ const getChatDetails = TryCatch(async (req, res, next) => {
       avatar: avatar.url,
     }));
     res.status(200).json({
-      sucess: true,
+      success: true,
       chat,
     });
   } else {
     const chat = await Chat.findById(req.params.id);
     if (!chat) return next(new ErrorHandler("Chat not Found", 404));
     res.status(200).json({
-      sucess: true,
+      success: true,
       chat,
     });
   }
@@ -282,8 +282,8 @@ const deleteChat = TryCatch(async (req, res, next) => {
   ])
   emmitEvent(req,REFETCH_CHATS,members)
   res.status(200).json({
-    sucess:true,
-    message:"Chat deleted sucessfully"
+    success:true,
+    message:"Chat deleted successfully"
   })
 });
 const renameGroup = TryCatch(async (req, res, next) => {
@@ -297,13 +297,13 @@ const renameGroup = TryCatch(async (req, res, next) => {
   await chat.save();
   emmitEvent(req, REFETCH_CHATS, chat.members);
   res.status(200).json({
-    sucess: true,
-    message: "Group renamed sucessfully",
+    success: true,
+    message: "Group renamed successfully",
   });
 });
 const getMessages = TryCatch(async(req,res,next)=>{
   const chatId = req.params.id
-  const {page = 1} = req.body
+  const {page = 1} = req.query
   const limit =10
   const skip = (page-1)*limit
 
@@ -316,7 +316,7 @@ const getMessages = TryCatch(async(req,res,next)=>{
   const totalPages = Math.ceil(totalMessageCount/limit)
 
   res.status(200).json({
-    sucess:true,
+    success:true,
     messages:messages.reverse(),
     totalPages
   })

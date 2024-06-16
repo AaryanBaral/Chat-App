@@ -1,82 +1,143 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Fragment } from 'react'
-import AppLayout from '../components/layout/AppLayout';
-import { IconButton, Stack } from '@mui/material';
-import { useRef } from 'react';
-import { grayColor, orange } from '../components/constants/color';
-import { AttachFile as AttachFileIcon, Send as SendIcon} from '@mui/icons-material';
-import { InputBox } from '../components/Styles/StyleComponent';
-import FileMenu from '../components/dialoge/FileMenu';
-import { sampleMessage } from '../components/constants/SampleData';
-import MessageComponent from '../components/shared/MessageComponent';
+import { Fragment, useCallback, useState } from "react";
+import AppLayout from "../components/layout/AppLayout";
+import { IconButton, Skeleton, Stack } from "@mui/material";
+import { useRef } from "react";
+import { grayColor, orange } from "../constants/color";
+import {
+  AttachFile as AttachFileIcon,
+  Send as SendIcon,
+} from "@mui/icons-material";
+import { InputBox } from "../components/Styles/StyleComponent";
+import FileMenu from "../components/dialoge/FileMenu";
+import MessageComponent from "../components/shared/MessageComponent";
+import { getSocket } from "../socket";
+import { NEW_MESSAGE } from "../constants/events";
+import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api";
+import { useErrors, useSocketEvents } from "../hooks/hook";
+import { useInfiniteScrollTop } from "6pp";
+import { useDispatch } from "react-redux";
+import { setIsFileMenu } from "../redux/reducers/misc";
 
-const Chat = () => {
-
-  const user = {
-    _id:"sfsfsdfsfsdfsdfs",
-    name:"Aaryan Baral"
-  }
+const Chat = ({ chatId, user }) => {
   const containerRef = useRef(null);
-  return (
+  const socket = getSocket();
+  const dispatch = useDispatch();
+  const [message, setMessage] = useState("");
+  const [fileMenuAnchor, setFileMenuAnchor] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [page, setPage] = useState(1);
+  const chatDetails = useChatDetailsQuery({ chatId, skip: !chatId });
+  const oldMessageChunk = useGetMessagesQuery({ chatId, page });
+
+  console.log("oldMesage chunk",oldMessageChunk)
+  const {data:oldMessages,setData:setOldMessages} = useInfiniteScrollTop(
+    containerRef,
+    oldMessageChunk.data?.totalPages,
+    page,
+    setPage,
+    oldMessageChunk.data?.messages
+    );
+    console.log("messages",messages)
+    console.log("old messages",oldMessages)
+  const allMessages = [...oldMessages,...messages];
+
+  const submitHandler = (e) => {
+    const members = chatDetails?.data?.chat?.members;
+    e.preventDefault();
+    if (!message.trim()) return;
+    //Emitting message to the server
+    socket.emit(NEW_MESSAGE, { chatId, members, message });
+    setMessage("");
+  };
+  const handleFile = async(e)=>{
+    dispatch(setIsFileMenu(true));
+    setFileMenuAnchor(e.currentTarget)
+  }
+
+  const newMessagesHandler = useCallback((data) => {
+    setMessages((prev) => [...prev, data.message]);
+  }, []);
+
+  const eventHandler = { [NEW_MESSAGE]: newMessagesHandler };
+  useSocketEvents(socket, eventHandler);
+
+  const errors = [
+    { isError: chatDetails.isError, error: chatDetails.error },
+    { oldMessageChunk: oldMessageChunk.isError, error: oldMessageChunk.error },
+  ];
+  useErrors(errors);
+
+
+  return chatDetails.isLoading ? (
+    <Skeleton />
+  ) : (
     <Fragment>
-      <Stack ref={containerRef}
-      boxSizing={'border-box'}
-      padding={"1rem"}
-      spacing={"1rem"}
-      bgcolor={grayColor}
-      height={"90%"}
-      sx={{
-        overflowX:"hidden",
-        overflowY:"auto",
-
-      }}
-      
-      >
-        {
-          sampleMessage.map((i)=>(
-            <MessageComponent message={i} user={user} key={i.id}/>
-          ))
-        }
-      </Stack>
-      <form style={{
-        height:"10%",
-      }}>
-        <Stack 
-        direction={"row"}
-        alignItems={"center"}
-        height={"100%"}
+      <Stack
+        ref={containerRef}
+        boxSizing={"border-box"}
         padding={"1rem"}
-        position={"relative"}
-
+        spacing={"1rem"}
+        bgcolor={grayColor}
+        height={"90%"}
+        sx={{
+          overflowX: "hidden",
+          overflowY: "auto",
+        }}
+      >
+        {allMessages.map((i) => (
+          <MessageComponent message={i} user={user} key={i.id} />
+        ))}
+      </Stack>
+      <form
+        style={{
+          height: "10%",
+        }}
+        onSubmit={submitHandler}
+      >
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          height={"100%"}
+          padding={"1rem"}
+          position={"relative"}
         >
           <IconButton
-           sx={{
-            position:"absolute",
-            left:"1.5rem",
-            rotate:"45deg"
-          }}>
+            sx={{
+              position: "absolute",
+              left: "1.5rem",
+              rotate: "45deg",
+            }}
+            onClick={handleFile}
+          >
             <AttachFileIcon />
           </IconButton>
-          <InputBox />
-          <IconButton type='submit' sx={{
-            rotate:"-45deg",
-            bgcolor: orange,
-            color: "white",
-            marginLeft: "1rem",
-            padding: "0.5rem",
-            textAlign:"center",
-            "&:hover":{
-              bgcolor:"error.dark"
-            }
-
-          }}>
+          <InputBox
+            placeholder='"Enter your message here....'
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <IconButton
+            type="submit"
+            sx={{
+              rotate: "-45deg",
+              bgcolor: orange,
+              color: "white",
+              marginLeft: "1rem",
+              padding: "0.5rem",
+              textAlign: "center",
+              "&:hover": {
+                bgcolor: "error.dark",
+              },
+            }}
+          >
             <SendIcon />
           </IconButton>
         </Stack>
       </form>
-      <FileMenu />
+      <FileMenu anchorE1={fileMenuAnchor}/>
     </Fragment>
-  )
-}
+  );
+};
 
 export default AppLayout()(Chat);

@@ -16,8 +16,8 @@ const adminLogin = TryCatch(async (req, res, next) => {
     .status(200)
     .cookie("wollo-admin", token, { ...cookieOption, maxAge: 10000 * 60 * 45 })
     .json({
-      sucess: true,
-      message: "Authenticated Sucessfully, Welcome Admin",
+      success: true,
+      message: "Authenticated successfully, Welcome Admin",
     });
 });
 const adminLogout = TryCatch(async (req, res, next) => {
@@ -25,8 +25,8 @@ const adminLogout = TryCatch(async (req, res, next) => {
     .status(200)
     .cookie("wollo-admin", "", { ...cookieOption, maxAge: 0 })
     .json({
-      sucess: true,
-      message: "Logged Out Sucessfully, See You Soon Admin",
+      success: true,
+      message: "Logged Out successfully, See You Soon Admin",
     });
 });
 
@@ -54,7 +54,7 @@ const allUsers = TryCatch(async (req, res, next) => {
     })
   );
   res.status(200).json({
-    sucess: true,
+    success: true,
     users: transformedUsers,
   });
 });
@@ -88,7 +88,7 @@ const allChats = TryCatch(async (req, res, next) => {
     })
   );
   res.status(200).json({
-    sucess: true,
+    success: true,
     chats: transformedChats,
   });
 });
@@ -113,7 +113,7 @@ const allMessages = TryCatch(async (req, res, next) => {
   );
 
   res.status(200).json({
-    sucess: true,
+    success: true,
     messages: transformedMessages,
   });
 });
@@ -150,7 +150,7 @@ const getDashboardStats = TryCatch(async (req, res, next) => {
     messagesChart: messages,
   };
   res.status(200).json({
-    sucess: true,
+    success: true,
     stats,
   });
 });
