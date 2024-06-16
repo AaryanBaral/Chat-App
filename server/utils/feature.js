@@ -25,6 +25,7 @@ const uploadFilesToCloudinary = async(files=[])=>{
             public_id:result.public_id,
             url : result.secure_url
         }))
+
         return formattedResult
     } catch (error) {
         console.log(error)

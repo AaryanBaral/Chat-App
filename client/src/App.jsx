@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { userExists, userNotExists } from './redux/reducers/auth'
 import {Toaster} from "react-hot-toast"
 import { SocketProvider } from './socket'
-import { server } from './constants/configure'
+import { server } from './constants/configure.js'
 
 const Home = lazy(()=> import("./pages/Home") )
 const Group = lazy(()=> import("./pages/Group") )

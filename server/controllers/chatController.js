@@ -9,7 +9,7 @@ import { ErrorHandler, TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chatModel.js";
 import { User } from "../models/userModel.js";
 import { Message } from "../models/messageModel.js";
-import { deleteFilesFromCloudinary, emmitEvent } from "../utils/feature.js";
+import { deleteFilesFromCloudinary, emmitEvent, uploadFilesToCloudinary } from "../utils/feature.js";
 
 const newGroupChat = TryCatch(async (req, res, next) => {
   const { name, members } = req.body;
@@ -204,16 +204,14 @@ const sendAttachments = TryCatch(async (req, res, next) => {
   if (!chat) return next(new ErrorHandler("Chat not Found", 404));
   if (files.length < 1)
     return next(new ErrorHandler("Please Provide Attachments", 400));
-
-  // upload files
-  const attachments = [];
-
+  const attachments = await uploadFilesToCloudinary(files);
   const messageForDB = {
     content: "",
     sender: req.userId,
     attachments,
     chat: chatId,
   };
+  console.log("message for DBB",messageForDB)
   const messageForRealTime = {
     ...messageForDB,
     sender: { _id: req.userId, name: me.name },

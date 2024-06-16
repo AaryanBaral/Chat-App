@@ -11,7 +11,7 @@ const messageSchema = new Schema({
         ref:"User",
         required:true
     },
-    attachment:[
+    attachments:[
         {
             public_id:{
                 type:String,
