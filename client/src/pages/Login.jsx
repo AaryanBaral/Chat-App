@@ -14,10 +14,10 @@ import { VisuallyHiddenInput } from "../components/Styles/StyleComponent";
 import { useFileHandler, useInputValidation, useStrongPassword } from "6pp";
 import { UsernameValidator } from "../utils/Validator";
 import axios from "axios";
-import { server } from "../../../server/constants/configure";
 import { useDispatch } from "react-redux";
 import { userExists } from "../redux/reducers/auth";
 import toast from "react-hot-toast";
+import { server } from "../constants/configure";
 const Login = () => {
   const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);

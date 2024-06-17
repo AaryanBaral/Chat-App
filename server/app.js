@@ -40,7 +40,7 @@ const server = createServer(app);
 const io = new Server(server, {
   cors: corsOption,
 });
-
+app.set("io",io)
 export const userSocketIds = new Map();
 const PORT = process.env.PORT || 3000;
 connectDB(process.env.MONGO_URI);
