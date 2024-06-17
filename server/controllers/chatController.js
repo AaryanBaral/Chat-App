@@ -1,6 +1,6 @@
 import {
   ALERT,
-  NEW_ATTACHMENTS,
+  NEW_MESSAGE,
   NEW_MESSAGE_ALERT,
   REFETCH_CHATS,
 } from "../constants/events.js";
@@ -40,7 +40,7 @@ const getMychats = TryCatch(async (req, res, next) => {
       _id,
       avatar: groupChat
         ? members.slice(0, 3).map(({ avatar }) => avatar.url)
-        : otherMember.avatar.url,
+        : [otherMember.avatar.url],
       name: groupChat ? name : otherMember.name,
       groupChat,
       members: members.reduce((prev, curr) => {
@@ -219,11 +219,12 @@ const sendAttachments = TryCatch(async (req, res, next) => {
   const message = await Message.create(messageForDB);
   if (!message)
     return next(new ErrorHandler("Error while creating a new Message", 500));
-  emmitEvent(req, NEW_ATTACHMENTS, chat.members, {
+  emmitEvent(req, NEW_MESSAGE, chat.members, {
     message: messageForRealTime,
     chatId,
   });
   emmitEvent(req, NEW_MESSAGE_ALERT, chat.members, { chatId });
+  console.log("ok")
   return res.status(200).json({
     success: true,
     message,

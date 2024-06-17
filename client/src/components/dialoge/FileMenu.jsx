@@ -44,7 +44,7 @@ const FileMenu = ({ anchorE1, chatId }) => {
      } catch (error) {
       toast.error(error,{id:toastId})
      }finally{
-      distapch(setUploadingLoader(false))
+      dispatch(setUploadingLoader(false))
      }
   };
   return (
