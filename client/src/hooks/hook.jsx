@@ -42,6 +42,7 @@ const useAsyncMutuation = (mutationHook)=>{
 
 const useSocketEvents = (socket,handlers)=>{
   useEffect(()=>{
+    
     Object.entries(handlers).forEach(([event,handler]) =>{
       socket.on(event,handler)
     })

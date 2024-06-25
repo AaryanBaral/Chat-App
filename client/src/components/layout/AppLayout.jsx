@@ -9,8 +9,12 @@ import { useParams } from "react-router-dom";
 import { useMyChatsQuery } from "../../redux/api/api";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsMobile } from "../../redux/reducers/misc";
-import { useErrors } from "../../hooks/hook";
+import { useErrors, useSocketEvents } from "../../hooks/hook";
 import { getSocket } from "../../socket";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT, NEW_REQUEST } from "../../constants/events";
+import { useCallback, useEffect } from "react";
+import { incrementNotification, setNewMessagesAlert } from "../../redux/reducers/chat";
+import { getOrSaveFromLocalStorage } from "../../lib/features";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
@@ -20,6 +24,7 @@ const AppLayout = () => (WrappedComponent) => {
     const { isLoading, isError, error, refetch, data } = useMyChatsQuery("");
     const { isMobile } = useSelector((state) => state.misc);
     const { user } = useSelector((state) => state.auth);
+    const { newMessagesAlert } = useSelector((state) => state.chat);
     const handleDeleteChat = (e, _id, groupChat) => {
       e.preventDefault();
       console.log("delete chat", _id, groupChat);
@@ -27,7 +32,23 @@ const AppLayout = () => (WrappedComponent) => {
     const handleMobileClose = () => {
       dispatch(setIsMobile(false));
     };
+    const newMessageAlertHandler = useCallback((data)=>{
+      if(data.chatId === chatId) return;
+      dispatch(setNewMessagesAlert(data))
+    },[chatId])
+    const newRequestHandler = useCallback(()=>{
+      dispatch(incrementNotification())
+    },[])
+    const eventHandler = { 
+      [NEW_MESSAGE]: newMessageAlertHandler,
+      [NEW_REQUEST]: newRequestHandler,
+
+     };
+    useSocketEvents(socket, eventHandler);
     useErrors([{isError,error}])
+    useEffect(()=>{
+      getOrSaveFromLocalStorage({key:NEW_MESSAGE_ALERT,value:newMessagesAlert})
+    },[newMessagesAlert])
 
 
     return (
@@ -43,6 +64,7 @@ const AppLayout = () => (WrappedComponent) => {
               chats={data?.chats}
               chatId={chatId}
               handleDeleteChat={handleDeleteChat}
+              newMessagesAlert={newMessagesAlert}
             />
           </Drawer>
         )}
@@ -61,6 +83,7 @@ const AppLayout = () => (WrappedComponent) => {
                 chats={data?.chats}
                 chatId={chatId}
                 handleDeleteChat={handleDeleteChat}
+                newMessagesAlert={newMessagesAlert}
 
               />
             )}

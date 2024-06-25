@@ -2,13 +2,13 @@ import { ListItemText, Menu, MenuItem, MenuList, Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsFileMenu, setUploadingLoader } from "../../redux/reducers/misc";
 import {
-  AudioFile as AudioFileIcon, 
+  AudioFile as AudioFileIcon,
   Image as ImageIcon,
   UploadFile as UploadFileIcon,
   VideoFile as VideoFileIcon,
 } from "@mui/icons-material";
 import { useRef } from "react";
-import { toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useSendAttachmentsMutation } from "../../redux/api/api";
 
 const FileMenu = ({ anchorE1, chatId }) => {
@@ -18,34 +18,47 @@ const FileMenu = ({ anchorE1, chatId }) => {
   const fileRef = useRef();
   const { isFileMenu } = useSelector((state) => state.misc);
   const dispatch = useDispatch();
-  const [sendAttachments] = useSendAttachmentsMutation()
-  const selectImage = ()=> imageRef.current?.click()
-  const selectAudio = ()=> audioRef.current?.click()
-  const selectVideo = ()=> videoRef.current?.click()
-  const selectFile = ()=> fileRef.current?.click()
+  const [sendAttachments] = useSendAttachmentsMutation();
+  const selectImage = () => imageRef.current?.click();
+  const selectAudio = () => audioRef.current?.click();
+  const selectVideo = () => videoRef.current?.click();
+  const selectFile = () => fileRef.current?.click();
+  const MAX_FILE_SIZE = 1024 * 1024 * 5;
   const closeFileMenu = () => {
     dispatch(setIsFileMenu(false));
   };
   const fileChangeHandler = async (e, key) => {
     const files = Array.from(e.target.files);
-    if (files.length <=0) return ;
-    if(files.length > 10) return toast.error(`You can only send 10 ${key} at a time`);
-    dispatch(setUploadingLoader(true))
+    if (files.length <= 0) return;
+    if (files.length > 10)
+      return toast.error(`You can only send 10 ${key} at a time`);
+    dispatch(setUploadingLoader(true));
     const toastId = toast.loading(`Sending ${key} .....`);
     closeFileMenu();
 
-     try {
+    try {
       const form = new FormData();
-      form.append("chatId",chatId)
-      files.forEach((file)=> form.append("files",file)) 
+      form.append("chatId", chatId);
+      let isLarge = false
+      files.forEach((file) => {
+        if(file.size > MAX_FILE_SIZE){
+          isLarge = true
+          return 
+        }
+        form.append("files", file)
+      }
+      )
+      if(isLarge){
+        return toast.error("File selected is too large to upload",{id:toastId});
+      }
       const res = await sendAttachments(form);
-      if(res.data) toast.success(`${key} sent successfully`,{id:toastId})
-      else toast.rttot(`failed to send ${key}`,{id:toastId})
-     } catch (error) {
-      toast.error(error,{id:toastId})
-     }finally{
-      dispatch(setUploadingLoader(false))
-     }
+      if (res.data) toast.success(`${key} sent successfully`, { id: toastId });
+      else toast.rttot(`failed to send ${key}`, { id: toastId });
+    } catch (error) {
+      toast.error(error, { id: toastId });
+    } finally {
+      dispatch(setUploadingLoader(false));
+    }
   };
   return (
     <Menu anchorEl={anchorE1} open={isFileMenu} onClose={closeFileMenu}>
