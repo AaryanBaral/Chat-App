@@ -8,10 +8,10 @@ import { emmitEvent, uploadFilesToCloudinary } from "../utils/feature.js";
 import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 const newUser = TryCatch(async (req, res, next) => {
-  const { name, username, password ,bio} = req.body;
-  const file = req.file
-  if(!file) return next(new ErrorHandler("Pleasae Upload Avatar",400))
-  const result = await uploadFilesToCloudinary([file])
+  const { name, username, password, bio } = req.body;
+  const file = req.file;
+  if (!file) return next(new ErrorHandler("Pleasae Upload Avatar", 400));
+  const result = await uploadFilesToCloudinary([file]);
   const avatar = {
     public_id: result[0].public_id,
     url: result[0].url,
@@ -143,13 +143,13 @@ const getMyNotifications = TryCatch(async (req, res, next) => {
   });
 });
 
-const getMyFriends = TryCatch(async (req, res, next) => { 
+const getMyFriends = TryCatch(async (req, res, next) => {
   const { chatId } = req.query;
   const chats = await Chat.find({
     members: req.userId,
     groupChat: false,
   }).populate("members", "name avatar");
-  const friends = chats.map(({ members }) => {
+  var friends = chats.map(({ members }) => {
     const othermember = getOtherMember(members, req.userId);
     return {
       _id: othermember._id,
@@ -157,20 +157,26 @@ const getMyFriends = TryCatch(async (req, res, next) => {
       avatar: othermember.avatar.url,
     };
   });
-  if(chatId){
+
+  friends = friends.filter((value, index, self) =>
+    index === self.findIndex((obj) => obj._id === value._id)
+  );
+  if (chatId) {
     // this api is used by admin of the chat to see list of friends of the admin that are not present in a given chatId
-    const chat = await Chat.findById(chatId)
-    const availableFriend = friends.filter((friend)=>!chat.members.includes(friend._id))
+    const chat = await Chat.findById(chatId);
+    const availableFriend = friends.filter(
+      (friend) => !chat.members.includes(friend._id)
+    );
     return res.status(200).json({
-      success:true,
-      availableFriend
-    })
-  }
-  else{
+      success: true,
+      availableFriend,
+    });
+  } else {
+    console.log(friends);
     return res.status(200).json({
-      success:true,
-      friends
-    })
+      success: true,
+      friends,
+    });
   }
 });
 export {
@@ -182,5 +188,5 @@ export {
   sendFriendRequest,
   acceptFriendRequest,
   getMyNotifications,
-  getMyFriends
+  getMyFriends,
 };

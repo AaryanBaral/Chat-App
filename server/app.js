@@ -10,25 +10,18 @@ import userRoute from "./routes/userRoute.js";
 import chatRoute from "./routes/chatRoute.js";
 import adminRoute from "./routes/adminRoute.js";
 import { Server } from "socket.io";
-import { createServer, get } from "http";
+import { createServer } from "http";
 import {
-  NEW_ATTACHMENTS,
   NEW_MESSAGE,
   NEW_MESSAGE_ALERT,
+  START_TYPING,
+  STOP_TYPING,
 } from "./constants/events.js";
 import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/messageModel.js";
 import { v2 as cloudnary } from "cloudinary";
 import cors from "cors";
-
-import {
-  createGroupChat,
-  createMessageInAChat,
-  createSingleChat,
-  createMessage,
-} from "./seeders/seeds.js";
-import { createUser } from "./seeders/seeds.js"; // only used to create fake data in the database
 import { corsOption } from "./constants/configure.js";
 import { socketAuthenticator } from "./middlewares/auth.js";
 
@@ -52,9 +45,6 @@ cloudnary.config({
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsOption));
-// createMessage(100)
-// createGroupChat(50)
-// createMessageInAChat("6669c4e9dd3896a50d1708d8",50)
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/chat", chatRoute);
 app.use("/api/v1/admin", adminRoute);
@@ -75,6 +65,16 @@ io.on("connect", (socket) => {
   console.log("a user connected", socket.id);
 
   console.log(userSocketIds);
+  socket.on(START_TYPING,({members,chatId})=>{
+    console.log("start- typing",chatId)
+    const memberSocket = getSockets(members)
+    socket.to(memberSocket).emit(START_TYPING,{chatId})
+  })
+  socket.on(STOP_TYPING,({members,chatId})=>{
+    console.log("stop - typing",chatId)
+    const memberSocket = getSockets(members)
+    socket.to(memberSocket).emit(STOP_TYPING,{chatId})
+  })
   socket.on(NEW_MESSAGE, async ({ chatId, message, members }) => {
 
 

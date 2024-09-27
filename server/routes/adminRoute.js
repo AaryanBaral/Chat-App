@@ -7,8 +7,8 @@ import { isAuthenticatedAsAdmin } from "../middlewares/auth.js";
 
 const route = express.Router();
 route.post("/verify",adminLoginValidator(),validatorHandler, adminLogin);
-route.post("/logout",adminLogout);
 route.use(isAuthenticatedAsAdmin)
+route.post("/logout",adminLogout);
 route.get("/",getAdminData);
 route.get("/users",allUsers);
 route.get("/messages",allMessages);
